@@ -185,7 +185,7 @@ class ExpressionEvaluator {
           (operator.associativity === Associativity.RIGHT &&
             operator.precedence < stack[stack.length - 1].precedence))
       ) {
-        output.push(stack.pop() as Token);
+        output.push(stack.pop()!);
       }
       stack.push(operator);
     };
@@ -221,7 +221,7 @@ class ExpressionEvaluator {
       ) {
         throw new Error("Mismatched parentheses");
       }
-      output.push(stack.pop() as Token);
+      output.push(stack.pop()!);
     }
 
     // Step 10: Return the output array
