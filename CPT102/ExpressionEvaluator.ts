@@ -14,6 +14,14 @@ class Token {
     ],
   );
 
+  static isLeftParenthesis(token: Token | string): boolean {
+    return token.toString() === "(";
+  }
+
+  isLeftParenthesis(): boolean {
+    return Token.isLeftParenthesis(this);
+  }
+
   static isParenthesis(token: Token | string): boolean {
     const parenthesis = ["(", ")"];
     return parenthesis.includes(token.toString());
@@ -128,14 +136,14 @@ class ExpressionEvaluator {
       }
 
       if (token.isParenthesis()) { // If the token is a parenthesis
-        if (token.toString() === "(") { // If the token is a left parenthesis, push it onto the stack
+        if (token.isLeftParenthesis()) { // If the token is a left parenthesis, push it onto the stack
           operatorStack.push(token);
           continue; // Move to the next token
         }
 
         while (operatorStack.length > 0) { // If the token is a right parenthesis, pop operators from the stack
           const top = operatorStack.pop()!;
-          if (top.toString() === "(") break; // until the matching left parenthesis is found
+          if (top.isLeftParenthesis()) break; // until the matching left parenthesis is found
           postfixTokens.push(top); // Add the popped operators to the postfix expression
         }
       }
@@ -159,6 +167,6 @@ Deno.test("tokenize", () => {
 });
 
 Deno.test("to postfix", () => {
-  const expr = new ExpressionEvaluator("1+2*3/4");
+  const expr = new ExpressionEvaluator("1+2-5*3/4");
   console.log(expr.toPostfix());
 });
