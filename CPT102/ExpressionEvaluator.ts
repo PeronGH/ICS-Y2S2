@@ -18,7 +18,7 @@ class Token {
     return token.toString() === "(";
   }
 
-  isLeftParenthesis(): boolean {
+  get isLeftParenthesis(): boolean {
     return Token.isLeftParenthesis(this);
   }
 
@@ -27,7 +27,7 @@ class Token {
     return parenthesis.includes(token.toString());
   }
 
-  isParenthesis(): boolean {
+  get isParenthesis(): boolean {
     return Token.isParenthesis(this);
   }
 
@@ -35,7 +35,7 @@ class Token {
     return this._OPERATOR_PRECEDENCE.has(token.toString());
   }
 
-  isOperator(): boolean {
+  get isOperator(): boolean {
     return Token.isOperator(this);
   }
 
@@ -43,7 +43,7 @@ class Token {
     return Token.isParenthesis(token) || Token.isOperator(token);
   }
 
-  isSymbol(): boolean {
+  get isSymbol(): boolean {
     return Token.isSymbol(this);
   }
 
@@ -52,7 +52,7 @@ class Token {
     return number >= 0;
   }
 
-  isNumber(): boolean {
+  get isNumber(): boolean {
     return Token.isNumber(this);
   }
 
@@ -60,7 +60,7 @@ class Token {
     return token.toString().trim() === "";
   }
 
-  isWhitespace(): boolean {
+  get isWhitespace(): boolean {
     return Token.isWhitespace(this);
   }
 
@@ -68,7 +68,7 @@ class Token {
     return Token._OPERATOR_PRECEDENCE.get(token.toString()) ?? 0;
   }
 
-  getPrecedence(): number {
+  get precedence(): number {
     return Token.getPrecedence(this);
   }
 
@@ -118,16 +118,16 @@ class ExpressionEvaluator {
     const operatorStack: Token[] = []; // Stack to hold operators
 
     for (const token of this._tokens) {
-      if (token.isNumber()) { // If the token is a number, add it to the postfix expression
+      if (token.isNumber) { // If the token is a number, add it to the postfix expression
         postfixTokens.push(token);
         continue; // Move to the next token
       }
 
-      if (token.isOperator()) { // If the token is an operator
+      if (token.isOperator) { // If the token is an operator
         while (
           operatorStack.length > 0 && // While there are operators on the stack
           operatorStack[operatorStack.length - 1] // and the top operator on the stack
-              .getPrecedence() >= token.getPrecedence() // has higher precedence than the current token
+              .precedence >= token.precedence // has higher precedence than the current token
         ) {
           postfixTokens.push(operatorStack.pop()!); // Pop the top operator from the stack and add it to the postfix expression
         }
@@ -135,15 +135,15 @@ class ExpressionEvaluator {
         continue; // Move to the next token
       }
 
-      if (token.isParenthesis()) { // If the token is a parenthesis
-        if (token.isLeftParenthesis()) { // If the token is a left parenthesis, push it onto the stack
+      if (token.isParenthesis) { // If the token is a parenthesis
+        if (token.isLeftParenthesis) { // If the token is a left parenthesis, push it onto the stack
           operatorStack.push(token);
           continue; // Move to the next token
         }
 
         while (operatorStack.length > 0) { // If the token is a right parenthesis, pop operators from the stack
           const top = operatorStack.pop()!;
-          if (top.isLeftParenthesis()) break; // until the matching left parenthesis is found
+          if (top.isLeftParenthesis) break; // until the matching left parenthesis is found
           postfixTokens.push(top); // Add the popped operators to the postfix expression
         }
       }
