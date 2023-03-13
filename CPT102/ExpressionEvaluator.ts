@@ -118,8 +118,8 @@ class ExpressionEvaluator {
       if (token.isOperator()) {
         while (
           operatorStack.length > 0 &&
-          operatorStack[operatorStack.length - 1].getPrecedence() >=
-            token.getPrecedence()
+          operatorStack[operatorStack.length - 1]
+              .getPrecedence() >= token.getPrecedence()
         ) {
           postfixTokens.push(operatorStack.pop()!);
         }
@@ -147,6 +147,10 @@ class ExpressionEvaluator {
 
     return postfixTokens;
   }
+
+  toPostfix(): string {
+    return this.toPostfixTokens().join(" ");
+  }
 }
 
 Deno.test("tokenize", () => {
@@ -156,5 +160,5 @@ Deno.test("tokenize", () => {
 
 Deno.test("to postfix", () => {
   const expr = new ExpressionEvaluator("1+2*3/4");
-  console.log(expr.toPostfixTokens().join(" "));
+  console.log(expr.toPostfix());
 });
