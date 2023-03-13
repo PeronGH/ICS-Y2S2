@@ -106,46 +106,46 @@ class ExpressionEvaluator {
   }
 
   toPostfixTokens(): Token[] {
-    const postfixTokens: Token[] = [];
-    const operatorStack: Token[] = [];
+    const postfixTokens: Token[] = []; // Array to hold the postfix expression
+    const operatorStack: Token[] = []; // Stack to hold operators
 
     for (const token of this._tokens) {
-      if (token.isNumber()) {
+      if (token.isNumber()) { // If the token is a number, add it to the postfix expression
         postfixTokens.push(token);
-        continue;
+        continue; // Move to the next token
       }
 
-      if (token.isOperator()) {
+      if (token.isOperator()) { // If the token is an operator
         while (
-          operatorStack.length > 0 &&
-          operatorStack[operatorStack.length - 1]
-              .getPrecedence() >= token.getPrecedence()
+          operatorStack.length > 0 && // While there are operators on the stack
+          operatorStack[operatorStack.length - 1] // and the top operator on the stack
+              .getPrecedence() >= token.getPrecedence() // has higher precedence than the current token
         ) {
-          postfixTokens.push(operatorStack.pop()!);
+          postfixTokens.push(operatorStack.pop()!); // Pop the top operator from the stack and add it to the postfix expression
         }
-        operatorStack.push(token);
-        continue;
+        operatorStack.push(token); // Push the current token onto the stack
+        continue; // Move to the next token
       }
 
-      if (token.isParenthesis()) {
-        if (token.toString() === "(") {
+      if (token.isParenthesis()) { // If the token is a parenthesis
+        if (token.toString() === "(") { // If the token is a left parenthesis, push it onto the stack
           operatorStack.push(token);
-          continue;
+          continue; // Move to the next token
         }
 
-        while (operatorStack.length > 0) {
+        while (operatorStack.length > 0) { // If the token is a right parenthesis, pop operators from the stack
           const top = operatorStack.pop()!;
-          if (top.toString() === "(") break;
-          postfixTokens.push(top);
+          if (top.toString() === "(") break; // until the matching left parenthesis is found
+          postfixTokens.push(top); // Add the popped operators to the postfix expression
         }
       }
     }
 
-    while (operatorStack.length > 0) {
-      postfixTokens.push(operatorStack.pop()!);
+    while (operatorStack.length > 0) { // Pop any remaining operators from the stack
+      postfixTokens.push(operatorStack.pop()!); // and add them to the postfix expression
     }
 
-    return postfixTokens;
+    return postfixTokens; // Return the postfix expression
   }
 
   toPostfix(): string {
