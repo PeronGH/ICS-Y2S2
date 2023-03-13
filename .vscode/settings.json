@@ -2,6 +2,9 @@
     "deno.enable": true,
     "python.analysis.typeCheckingMode": "basic",
     "cSpell.words": [
+        "astype",
+        "matplotlib",
+        "networkx",
         "todense"
     ]
 }

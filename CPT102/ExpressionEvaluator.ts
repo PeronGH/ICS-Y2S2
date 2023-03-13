@@ -1,16 +1,33 @@
+enum TokenType {
+  NUMBER,
+  OPERATOR,
+  PARENTHESIS,
+  LETTER,
+}
+
+enum Associativity {
+  LEFT,
+  RIGHT,
+}
+
+type OperatorData = {
+  precedence: number;
+  associativity: Associativity;
+};
+
 class Token {
-  constructor(private _name: string) {}
+  constructor(public readonly type: TokenType, public readonly value: string) {}
 
   toString(): string {
-    return this._name;
+    return this.value;
   }
 
-  private static _OPERATOR_PRECEDENCE = new Map(
+  private static OPERATOR_DATA = new Map<string, OperatorData>(
     [
-      ["+", 1],
-      ["-", 1],
-      ["*", 2],
-      ["/", 2],
+      ["+", { precedence: 1, associativity: Associativity.LEFT }],
+      ["-", { precedence: 1, associativity: Associativity.LEFT }],
+      ["*", { precedence: 2, associativity: Associativity.LEFT }],
+      ["/", { precedence: 2, associativity: Associativity.LEFT }],
     ],
   );
 
@@ -32,7 +49,7 @@ class Token {
   }
 
   static isOperator(token: Token | string): boolean {
-    return this._OPERATOR_PRECEDENCE.has(token.toString());
+    return this.OPERATOR_DATA.has(token.toString());
   }
 
   get isOperator(): boolean {
@@ -48,8 +65,7 @@ class Token {
   }
 
   static isNumber(token: Token | string): boolean {
-    const number = Number(token.toString());
-    return number >= 0;
+    return /^\d+$/.test(token.toString());
   }
 
   get isNumber(): boolean {
@@ -65,36 +81,75 @@ class Token {
   }
 
   static getPrecedence(token: Token | string): number {
-    return Token._OPERATOR_PRECEDENCE.get(token.toString()) ?? 0;
+    return Token.OPERATOR_DATA.get(token.toString())?.precedence ?? 0;
   }
 
   get precedence(): number {
     return Token.getPrecedence(this);
   }
 
+  static getAssociativity(token: Token | string): Associativity {
+    return Token.OPERATOR_DATA.get(token.toString())?.associativity ?? 0;
+  }
+
+  get associativity(): Associativity {
+    return Token.getAssociativity(this);
+  }
+
   static tokenize(expression: string): Token[] {
+    // Step 1: Initialize an empty array to hold the tokens
     const tokens: Token[] = [];
-    let currentToken = "";
 
-    for (const char of expression) {
-      if (Token.isWhitespace(char)) continue;
+    // Step 2: Initialize a buffer to hold the characters of the current token
+    let buffer = "";
 
+    // Step 3: Iterate through each character of the expression
+    for (let i = 0; i < expression.length; i++) {
+      const char = expression[i];
+      const nextChar = expression[i + 1];
+
+      // Step 4: Check if the current character is a symbol
       if (Token.isSymbol(char)) {
-        if (currentToken) {
-          tokens.push(new Token(currentToken));
-          currentToken = "";
+        // Step 5: If the buffer is not empty, push a number token to the tokens array
+        if (buffer) {
+          tokens.push(new Token(TokenType.NUMBER, buffer));
+          buffer = "";
         }
-        tokens.push(new Token(char));
-        continue;
+
+        // Step 6: Handle negative numbers with prefix "-"
+        if (
+          char === "-" && Token.isNumber(nextChar) &&
+          (!tokens.length ||
+            Token.isOperator(tokens[tokens.length - 1].value) ||
+            tokens[tokens.length - 1].value === "(")
+        ) {
+          buffer += "-";
+        } else {
+          // Step 7: Push an operator token to the tokens array
+          tokens.push(new Token(TokenType.OPERATOR, char));
+        }
+      } else if (Token.isNumber(char)) {
+        // Step 8: If the current character is a number, add it to the buffer
+        buffer += char;
+      } else if (Token.isWhitespace(char)) {
+        // Step 9: If the current character is whitespace and the buffer is not empty,
+        // push a number token to the tokens array
+        if (buffer) {
+          tokens.push(new Token(TokenType.NUMBER, buffer));
+          buffer = "";
+        }
+      } else {
+        // Step 10: If the current character is not a symbol, number, or whitespace, throw an error
+        throw new Error(`Unexpected token: ${char}`);
       }
-
-      currentToken += char;
     }
 
-    if (currentToken) {
-      tokens.push(new Token(currentToken));
+    // Step 11: If the buffer is not empty, push a number token to the tokens array
+    if (buffer) {
+      tokens.push(new Token(TokenType.NUMBER, buffer));
     }
 
+    // Step 12: Return the tokens array
     return tokens;
   }
 }
@@ -114,55 +169,76 @@ class ExpressionEvaluator {
   }
 
   toPostfixTokens(): Token[] {
-    const postfixTokens: Token[] = []; // Array to hold the postfix expression
-    const operatorStack: Token[] = []; // Stack to hold operators
-
-    for (const token of this._tokens) {
-      if (token.isNumber) { // If the token is a number, add it to the postfix expression
-        postfixTokens.push(token);
-        continue; // Move to the next token
-      }
-
-      if (token.isOperator) { // If the token is an operator
-        while (
-          operatorStack.length > 0 && // While there are operators on the stack
-          operatorStack[operatorStack.length - 1] // and the top operator on the stack
-              .precedence >= token.precedence // has higher precedence than the current token
-        ) {
-          postfixTokens.push(operatorStack.pop()!); // Pop the top operator from the stack and add it to the postfix expression
-        }
-        operatorStack.push(token); // Push the current token onto the stack
-        continue; // Move to the next token
-      }
-
-      if (token.isParenthesis) { // If the token is a parenthesis
-        if (token.isLeftParenthesis) { // If the token is a left parenthesis, push it onto the stack
-          operatorStack.push(token);
-          continue; // Move to the next token
-        }
-
-        while (operatorStack.length > 0) { // If the token is a right parenthesis, pop operators from the stack
-          const top = operatorStack.pop()!;
-          if (top.isLeftParenthesis) break; // until the matching left parenthesis is found
-          postfixTokens.push(top); // Add the popped operators to the postfix expression
-        }
-      }
-    }
-
-    while (operatorStack.length > 0) { // Pop any remaining operators from the stack
-      postfixTokens.push(operatorStack.pop()!); // and add them to the postfix expression
-    }
-
-    return postfixTokens; // Return the postfix expression
+    return ExpressionEvaluator.toPostfixTokens(this._tokens);
   }
 
   toPostfix(): string {
     return this.toPostfixTokens().join(" ");
   }
+
+  private static toPostfixTokens(tokens: Token[]): Token[] {
+    // Step 1: Initialize an empty array to hold the output tokens
+    const output: Token[] = [];
+
+    // Step 2: Initialize an empty stack to hold the operators
+    const stack: Token[] = [];
+
+    // Step 3: Define a function to handle operators
+    const handleOperator = (operator: Token) => {
+      while (
+        stack.length &&
+        stack[stack.length - 1].type === TokenType.OPERATOR &&
+        ((operator.associativity === Associativity.LEFT &&
+          operator.precedence <= stack[stack.length - 1].precedence) ||
+          (operator.associativity === Associativity.RIGHT &&
+            operator.precedence < stack[stack.length - 1].precedence))
+      ) {
+        output.push(stack.pop() as Token);
+      }
+      stack.push(operator);
+    };
+
+    // Step 4: Iterate through each token in the input
+    for (const token of tokens) {
+      if (token.type === TokenType.NUMBER) {
+        // Step 5: If the token is a number, push it to the output
+        output.push(token);
+      } else if (token.type === TokenType.OPERATOR) {
+        // Step 6: If the token is an operator, handle it
+        handleOperator(token);
+      } else if (token.value === "(") {
+        // Step 7: If the token is a left parenthesis, push it to the stack
+        stack.push(token);
+      } else if (token.value === ")") {
+        // Step 8: If the token is a right parenthesis, pop operators from the stack and push them to the output until a left parenthesis is encountered
+        while (stack.length && stack[stack.length - 1].value !== "(") {
+          output.push(stack.pop()!);
+        }
+        if (!stack.length) {
+          throw new Error("Mismatched parentheses");
+        }
+        stack.pop();
+      }
+    }
+
+    // Step 9: Pop any remaining operators from the stack and push them to the output
+    while (stack.length) {
+      if (
+        stack[stack.length - 1].value === "(" ||
+        stack[stack.length - 1].value === ")"
+      ) {
+        throw new Error("Mismatched parentheses");
+      }
+      output.push(stack.pop() as Token);
+    }
+
+    // Step 10: Return the output array
+    return output;
+  }
 }
 
 Deno.test("tokenize", () => {
-  const tokens = Token.tokenize("1+2112*33/12");
+  const tokens = Token.tokenize("(-1+2112)* -33/12");
   console.log(tokens);
 });
 
