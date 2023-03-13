@@ -31,14 +31,6 @@ class Token {
     ],
   );
 
-  static isLeftParenthesis(token: Token | string): boolean {
-    return token.toString() === "(";
-  }
-
-  get isLeftParenthesis(): boolean {
-    return Token.isLeftParenthesis(this);
-  }
-
   static isParenthesis(token: Token | string): boolean {
     const parenthesis = ["(", ")"];
     return parenthesis.includes(token.toString());
