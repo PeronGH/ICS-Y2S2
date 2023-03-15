@@ -100,6 +100,7 @@ export class BinarySearchTreeNode<T> {
       // Case 3: Node with two children
       // Replace the current node's value with the value of its in-order predecessor
       // (the rightmost node in its left subtree) and remove the in-order predecessor
+      // Note `rightmostInLeftSubtree.value` is the largest value that is smaller than `this.value`
       const rightmostInLeftSubtree = this.left.rightmostNode;
       this.value = rightmostInLeftSubtree.value;
       this.left = this.left.remove(this.value);
@@ -178,7 +179,19 @@ Deno.test("binary search tree", () => {
   console.log(tree.collect("post"));
   console.log(tree.find(7)?.toString());
   console.log(tree.toString());
-  tree.remove(7);
+  tree.remove(5);
   console.log(tree.toString());
   console.log(tree.collect());
+});
+
+Deno.test("remove", () => {
+  const tree = new BinarySearchTree(5);
+  tree.insert(4);
+  tree.insert(3);
+  tree.insert(2);
+  tree.insert(1);
+
+  console.log(tree.toString());
+  tree.remove(4);
+  console.log(tree.toString());
 });

@@ -5,14 +5,8 @@ enum TokenType {
   LETTER,
 }
 
-enum Associativity {
-  LEFT,
-  RIGHT,
-}
-
 type OperatorData = {
   precedence: number;
-  associativity: Associativity;
 };
 
 class Token {
@@ -24,10 +18,10 @@ class Token {
 
   private static OPERATOR_DATA = new Map<string, OperatorData>(
     [
-      ["+", { precedence: 1, associativity: Associativity.LEFT }],
-      ["-", { precedence: 1, associativity: Associativity.LEFT }],
-      ["*", { precedence: 2, associativity: Associativity.LEFT }],
-      ["/", { precedence: 2, associativity: Associativity.LEFT }],
+      ["+", { precedence: 1 }],
+      ["-", { precedence: 1 }],
+      ["*", { precedence: 2 }],
+      ["/", { precedence: 2 }],
     ],
   );
 
@@ -78,14 +72,6 @@ class Token {
 
   get precedence(): number {
     return Token.getPrecedence(this);
-  }
-
-  static getAssociativity(token: Token | string): Associativity {
-    return Token.OPERATOR_DATA.get(token.toString())?.associativity ?? 0;
-  }
-
-  get associativity(): Associativity {
-    return Token.getAssociativity(this);
   }
 
   static tokenize(expression: string): Token[] {
@@ -180,10 +166,10 @@ class ExpressionEvaluator {
       while (
         stack.length &&
         stack[stack.length - 1].type === TokenType.OPERATOR &&
-        ((operator.associativity === Associativity.LEFT &&
-          operator.precedence <= stack[stack.length - 1].precedence) ||
-          (operator.associativity === Associativity.RIGHT &&
-            operator.precedence < stack[stack.length - 1].precedence))
+        (
+          operator.precedence <= stack[stack.length - 1].precedence ||
+          operator.precedence < stack[stack.length - 1].precedence
+        )
       ) {
         output.push(stack.pop()!);
       }
