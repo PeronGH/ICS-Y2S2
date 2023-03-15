@@ -163,13 +163,15 @@ class ExpressionEvaluator {
 
     // Step 3: Define a function to handle operators
     const handleOperator = (operator: Token) => {
+      // while the stack is not empty, and the top of the stack is an operator,
+      // and the operator on the top of the stack has greater or equal precedence than the current operator,
+      // pop the operator from the stack and push it to the output
+      // that is, pop all operators from the stack with greater or equal precedence than the current operator
+      // finally, push the current operator to the stack
       while (
         stack.length &&
         stack[stack.length - 1].type === TokenType.OPERATOR &&
-        (
-          operator.precedence <= stack[stack.length - 1].precedence ||
-          operator.precedence < stack[stack.length - 1].precedence
-        )
+        operator.precedence <= stack[stack.length - 1].precedence
       ) {
         output.push(stack.pop()!);
       }
