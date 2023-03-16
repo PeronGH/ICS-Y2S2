@@ -190,7 +190,8 @@ class ExpressionEvaluator {
         // Step 7: If the token is a left parenthesis, push it to the stack
         stack.push(token);
       } else if (token.value === ")") {
-        // Step 8: If the token is a right parenthesis, pop operators from the stack and push them to the output until a left parenthesis is encountered
+        // Step 8: If the token is a right parenthesis, pop operators from the stack and push them to the output
+        // until a left parenthesis is encountered
         while (stack.length && stack[stack.length - 1].value !== "(") {
           output.push(stack.pop()!);
         }
