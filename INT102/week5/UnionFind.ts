@@ -2,45 +2,48 @@ export class UnionFind {
   private parent: number[] = []; // an array to store the parent of each element
   private rank: number[] = []; // an array to store the rank (depth) of each tree
 
-  constructor(size: number) { // constructor initializes the parent array and the rank array
+  // The constructor initializes both arrays, with each element initially being its own parent and having rank 0.
+  constructor(size: number) {
     for (let i = 0; i < size; i++) {
-      this.parent[i] = i; // initially, each element is its own parent
-      this.rank[i] = 0; // initially, each tree has depth 0
+      this.parent[i] = i;
+      this.rank[i] = 0;
     }
   }
 
   /**
-   * Find the root of the tree that x belongs to
+   * The `find` method takes an element and returns the root of the tree it belongs to.
+   * It uses path compression to optimize future calls to `find`.
    * @param x The element whose root we want to find
    * @returns the root of the tree that x belongs to
    */
   find(x: number): number {
-    if (this.parent[x] !== x) { // if x is not the parent of itself
-      this.parent[x] = this.find(this.parent[x]); // recursively find the parent of x and update the parent of x to the root
+    if (this.parent[x] !== x) { // path compression
+      this.parent[x] = this.find(this.parent[x]);
     }
-    return this.parent[x]; // return the parent of x (which is now the root of the tree)
+    return this.parent[x];
   }
 
   /**
-   * Merge the sets containing x and y
+   * The `union` method takes two elements and merges the trees they belong to.
+   * It uses union by rank to keep the trees balanced.
    * @param x An element in the first set
    * @param y An element in the second set
    */
   union(x: number, y: number): void {
-    const rootX = this.find(x); // find the root of the tree containing x
-    const rootY = this.find(y); // find the root of the tree containing y
+    const rootX = this.find(x);
+    const rootY = this.find(y);
 
-    if (rootX === rootY) { // if x and y are already in the same set, do nothing
+    if (rootX === rootY) { // if two elements already belong to the same set, `union` does nothing.
       return;
     }
 
-    if (this.rank[rootX] > this.rank[rootY]) { // if the tree containing x is deeper than the tree containing y
-      this.parent[rootY] = rootX; // make the root of the tree containing y a child of the root of the tree containing x
-    } else if (this.rank[rootX] < this.rank[rootY]) { // if the tree containing y is deeper than the tree containing x
-      this.parent[rootX] = rootY; // make the root of the tree containing x a child of the root of the tree containing y
-    } else { // if the trees containing x and y have the same depth
-      this.parent[rootY] = rootX; // make the root of the tree containing y a child of the root of the tree containing x
-      this.rank[rootX]++; // increment the depth of the tree containing x
+    if (this.rank[rootX] > this.rank[rootY]) { // union by rank
+      this.parent[rootY] = rootX;
+    } else if (this.rank[rootX] < this.rank[rootY]) {
+      this.parent[rootX] = rootY;
+    } else { // if two trees have the same rank, `union` chooses one to be the new root and increments its rank.
+      this.parent[rootY] = rootX;
+      this.rank[rootX]++;
     }
   }
 }
