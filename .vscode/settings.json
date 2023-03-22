@@ -3,6 +3,7 @@
     "python.analysis.typeCheckingMode": "basic",
     "cSpell.words": [
         "astype",
+        "heapify",
         "matplotlib",
         "networkx",
         "todense"
