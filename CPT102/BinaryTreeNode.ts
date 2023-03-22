@@ -25,6 +25,36 @@ export class BinaryTreeNode<T> {
     return this.size === 0;
   }
 
+  static isComplete<T>(root: BinaryTreeNode<T> | null): boolean {
+    if (!root) {
+      return true;
+    }
+
+    const queue: Array<BinaryTreeNode<T> | null> = [root];
+    let flag = false;
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+
+      if (current === null) {
+        flag = true;
+      } else {
+        if (flag) {
+          return false;
+        }
+
+        queue.push(current.left);
+        queue.push(current.right);
+      }
+    }
+
+    return true;
+  }
+
+  get isComplete(): boolean {
+    return BinaryTreeNode.isComplete(this);
+  }
+
   collect(order: "in" | "pre" | "post" = "in", result: T[] = []): T[] {
     switch (order) {
       case "in":
