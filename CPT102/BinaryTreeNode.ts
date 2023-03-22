@@ -47,6 +47,26 @@ export class BinaryTreeNode<T> {
     return true;
   }
 
+  get isHeap(): boolean {
+    return this.isComplete && (this.isMaxHeap || this.isMinHeap);
+  }
+
+  private get isMaxHeap(): boolean {
+    if (this.isLeaf) return true;
+    if (this.left && this.value < this.left.value) return false;
+    if (this.right && this.value < this.right.value) return false;
+    return (!this.left || this.left.isMaxHeap) &&
+      (!this.right || this.right.isMaxHeap);
+  }
+
+  private get isMinHeap(): boolean {
+    if (this.isLeaf) return true;
+    if (this.left && this.value > this.left.value) return false;
+    if (this.right && this.value > this.right.value) return false;
+    return (!this.left || this.left.isMinHeap) &&
+      (!this.right || this.right.isMinHeap);
+  }
+
   collect(order: "in" | "pre" | "post" = "in", result: T[] = []): T[] {
     switch (order) {
       case "in":
@@ -98,15 +118,15 @@ export class BinaryTreeNode<T> {
   }
 }
 
-Deno.test("Complete Tree", () => {
-  const root = new BinaryTreeNode(1);
-  root.left = new BinaryTreeNode(2);
-  root.right = new BinaryTreeNode(3);
-  root.left.left = new BinaryTreeNode(4);
-  root.left.right = new BinaryTreeNode(5);
-  root.right.left = new BinaryTreeNode(6);
-  root.right.right = new BinaryTreeNode(7);
+Deno.test("max heap", () => {
+  const root = new BinaryTreeNode(10);
+  root.left = new BinaryTreeNode(5);
+  root.right = new BinaryTreeNode(9);
+  root.left.left = new BinaryTreeNode(1);
+  root.left.right = new BinaryTreeNode(4);
+  root.right.left = new BinaryTreeNode(4);
+  root.right.right = new BinaryTreeNode(2);
 
   console.log(root.toString());
-  console.log(root.isComplete);
+  console.log(root.isHeap);
 });
