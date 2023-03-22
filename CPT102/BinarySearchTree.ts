@@ -1,9 +1,13 @@
-export class BinarySearchTreeNode<T> {
+import { BinaryTreeNode } from "./BinaryTreeNode.ts";
+
+export class BinarySearchTreeNode<T> extends BinaryTreeNode<T> {
   constructor(
     public value: T,
     public left: BinarySearchTreeNode<T> | null = null,
     public right: BinarySearchTreeNode<T> | null = null,
   ) {
+    super(value, left, right);
+
     // validate that left is less than value
     // and right is greater than value
 
@@ -14,26 +18,6 @@ export class BinarySearchTreeNode<T> {
     if (right && right.value <= value) {
       throw new Error("Right node is less than or equal to parent");
     }
-  }
-
-  get leftmostNode(): BinarySearchTreeNode<T> {
-    return this.left ? this.left.leftmostNode : this;
-  }
-
-  get rightmostNode(): BinarySearchTreeNode<T> {
-    return this.right ? this.right.rightmostNode : this;
-  }
-
-  get isLeaf(): boolean {
-    return !this.left && !this.right;
-  }
-
-  get size(): number {
-    return 1 + (this.left?.size ?? 0) + (this.right?.size ?? 0);
-  }
-
-  get isEmpty(): boolean {
-    return this.size === 0;
   }
 
   find(value: T): BinarySearchTreeNode<T> | null {
@@ -107,34 +91,6 @@ export class BinarySearchTreeNode<T> {
     }
 
     return this;
-  }
-
-  clone(): this {
-    return this.constructor(
-      this.value,
-      this.left?.clone(),
-      this.right?.clone(),
-    );
-  }
-
-  toString(level = 0, prefix = "M:"): string {
-    const valueString = "" + this.value;
-    const indent = " ".repeat(level * 2);
-
-    // Create the string representation of the node
-    let nodeString = `${indent}${prefix}${valueString}\n`;
-
-    // Add the left subtree, if it exists
-    if (this.left !== null) {
-      nodeString += this.left.toString(level + 1, "L:");
-    }
-
-    // Add the right subtree, if it exists
-    if (this.right !== null) {
-      nodeString += this.right.toString(level + 1, "R:");
-    }
-
-    return nodeString;
   }
 }
 
