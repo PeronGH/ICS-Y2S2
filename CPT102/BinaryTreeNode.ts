@@ -26,28 +26,37 @@ export class BinaryTreeNode<T> {
   }
 
   static isComplete<T>(root: BinaryTreeNode<T> | null): boolean {
+    // If the root is null, the tree is considered complete
     if (!root) {
       return true;
     }
 
+    // Initialize a queue to traverse the tree using level order traversal
     const queue: Array<BinaryTreeNode<T> | null> = [root];
+    // A flag to indicate whether a null node has been encountered or not
     let flag = false;
 
+    // Loop until the queue is empty
     while (queue.length > 0) {
+      // Dequeue the first element from the queue
       const current = queue.shift()!;
 
+      // If the current node is null, set the flag to true
       if (current === null) {
         flag = true;
       } else {
+        // If a non-null node is found after a null node, the tree is not complete
         if (flag) {
           return false;
         }
 
+        // Enqueue the left and right children of the current node
         queue.push(current.left);
         queue.push(current.right);
       }
     }
 
+    // If the loop completes without returning false, the tree is complete
     return true;
   }
 
