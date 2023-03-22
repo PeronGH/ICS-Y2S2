@@ -114,3 +114,16 @@ export class BinaryTreeNode<T> {
     return nodeString;
   }
 }
+
+Deno.test("Complete Tree", () => {
+  const root = new BinaryTreeNode(1);
+  root.left = new BinaryTreeNode(2);
+  root.right = new BinaryTreeNode(3);
+  root.left.left = new BinaryTreeNode(4);
+  root.left.right = new BinaryTreeNode(5);
+  root.right.left = new BinaryTreeNode(6);
+  root.right.right = new BinaryTreeNode(7);
+
+  console.log(root.toString());
+  console.log(root.isComplete);
+});
