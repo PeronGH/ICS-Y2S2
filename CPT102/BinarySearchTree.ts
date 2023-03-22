@@ -36,28 +36,6 @@ export class BinarySearchTreeNode<T> extends BinaryTreeNode<T> {
     return null;
   }
 
-  collect(order: "in" | "pre" | "post" = "in", result: T[] = []): T[] {
-    switch (order) {
-      case "in":
-        this.left?.collect(order, result);
-        result.push(this.value);
-        this.right?.collect(order, result);
-        break;
-      case "pre":
-        result.push(this.value);
-        this.left?.collect(order, result);
-        this.right?.collect(order, result);
-        break;
-      case "post":
-        this.left?.collect(order, result);
-        this.right?.collect(order, result);
-        result.push(this.value);
-        break;
-    }
-
-    return result;
-  }
-
   remove(value: T): BinarySearchTreeNode<T> | null {
     if (value < this.value) {
       if (this.left) {

@@ -25,6 +25,28 @@ export class BinaryTreeNode<T> {
     return this.size === 0;
   }
 
+  collect(order: "in" | "pre" | "post" = "in", result: T[] = []): T[] {
+    switch (order) {
+      case "in":
+        this.left?.collect(order, result);
+        result.push(this.value);
+        this.right?.collect(order, result);
+        break;
+      case "pre":
+        result.push(this.value);
+        this.left?.collect(order, result);
+        this.right?.collect(order, result);
+        break;
+      case "post":
+        this.left?.collect(order, result);
+        this.right?.collect(order, result);
+        result.push(this.value);
+        break;
+    }
+
+    return result;
+  }
+
   clone(): this {
     return this.constructor(
       this.value,
