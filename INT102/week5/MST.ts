@@ -1,7 +1,7 @@
 import { Edge, Graph, Vertex } from "./Graph.ts";
 import { UnionFind } from "./UnionFind.ts";
 
-class MST<T> extends Graph<T> {
+export class MST<T> extends Graph<T> {
   primMST(start: Vertex<T>): Edge<T>[] {
     // Create an empty array to store edges of the minimum spanning tree
     const mst: Edge<T>[] = [];
@@ -86,19 +86,21 @@ class MST<T> extends Graph<T> {
   }
 }
 
-const vertices = [0, 1, 2, 3, 4, 5].map((value) => new Vertex(value));
+Deno.test("mst", () => {
+  const vertices = [0, 1, 2, 3, 4, 5].map((value) => new Vertex(value));
 
-const graph = new MST(...vertices);
+  const graph = new MST(...vertices);
 
-graph.addEdge(0, 1, 2);
-graph.addEdge(0, 2, 4);
-graph.addEdge(1, 2, 1);
-graph.addEdge(1, 3, 7);
-graph.addEdge(2, 4, 3);
-graph.addEdge(2, 3, 3);
-graph.addEdge(3, 4, 5);
-graph.addEdge(3, 5, 6);
-graph.addEdge(4, 5, 1);
+  graph.addEdge(0, 1, 2);
+  graph.addEdge(0, 2, 4);
+  graph.addEdge(1, 2, 1);
+  graph.addEdge(1, 3, 7);
+  graph.addEdge(2, 4, 3);
+  graph.addEdge(2, 3, 3);
+  graph.addEdge(3, 4, 5);
+  graph.addEdge(3, 5, 6);
+  graph.addEdge(4, 5, 1);
 
-console.log(graph.primMST(vertices[0]));
-console.log(graph.kruskalMST());
+  console.log(graph.primMST(vertices[0]));
+  console.log(graph.kruskalMST());
+});
