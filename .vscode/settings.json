@@ -7,6 +7,7 @@
         "horspool",
         "matplotlib",
         "networkx",
-        "todense"
+        "todense",
+        "unistd"
     ]
 }
