@@ -1,6 +1,6 @@
 pub fn lcs_tab(str1: &str, str2: &str) -> usize {
-    let m = str1.len();
-    let n = str2.len();
+    let m = str1.chars().count();
+    let n = str2.chars().count();
     // Create a 2D table to store the lengths of LCS for all subproblems
     let mut dp = vec![vec![0; n + 1]; m + 1];
 
