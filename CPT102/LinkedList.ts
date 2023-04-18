@@ -143,11 +143,11 @@ Deno.test("LinkedList", () => {
   list.addAt(4, 5);
 
   assertEquals(list.length, 5);
-  assertEquals(list.at(0), 1);
-  assertEquals(list.at(1), 2);
-  assertEquals(list.at(2), 3);
-  assertEquals(list.at(3), 4);
-  assertEquals(list.at(4), 5);
+  assertEquals(list[0], 1);
+  assertEquals(list[1], 2);
+  assertEquals(list[2], 3);
+  assertEquals(list[3], 4);
+  assertEquals(list[4], 5);
 
   list[0] = 6;
   list[1] = 7;
@@ -156,11 +156,11 @@ Deno.test("LinkedList", () => {
   list[4] = 10;
 
   assertEquals(list.length, 5);
-  assertEquals(list.at(0), 6);
-  assertEquals(list.at(1), 7);
-  assertEquals(list.at(2), 8);
-  assertEquals(list.at(3), 9);
-  assertEquals(list.at(4), 10);
+  assertEquals(list[0], 6);
+  assertEquals(list[1], 7);
+  assertEquals(list[2], 8);
+  assertEquals(list[3], 9);
+  assertEquals(list[4], 10);
 
   assertEquals([...list], [6, 7, 8, 9, 10]);
 });
