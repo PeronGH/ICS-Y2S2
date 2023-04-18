@@ -7,8 +7,10 @@
         "horspool",
         "matplotlib",
         "networkx",
+        "petgraph",
         "subproblems",
         "todense",
-        "unistd"
+        "unistd",
+        "warshall"
     ]
 }
