@@ -11,8 +11,7 @@ This repository is a collection of code for the Year 2 Semester 2 modules of ICS
 
 ## Contributing
 
-If you have any code that you would like to contribute, please feel free to open a pull request.
-The language of choices are TypeScript, Rust and Python, but you can also use other languages if you wish.
+If you have any code that you would like to contribute, please feel free to open a pull request. The preferred languages are TypeScript, Rust, and Python, but you can also use other languages if you wish.
 
 ## Disclaimer
 
