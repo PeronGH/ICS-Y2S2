@@ -1,6 +1,6 @@
 # XJTLU ICS Year 2 Semester 2
 
-This repository is a collection of notes and resources for the Year 2 Semester 2 modules of ICS (Information and Computing Science) in XJTLU.
+This repository is a collection of code for the Year 2 Semester 2 modules of ICS (Information and Computing Science) in XJTLU.
 
 ## Modules
 
@@ -8,6 +8,11 @@ This repository is a collection of notes and resources for the Year 2 Semester 2
 - CPT104 Operating Systems Concepts
 - INT102 Algorithmic Foundations and Problem Solving
 - INT104 Artificial Intelligence
+
+## Contributing
+
+If you have any code that you would like to contribute, please feel free to open a pull request.
+The language of choices are TypeScript, Rust and Python, but you can also use other languages if you wish.
 
 ## Disclaimer
 
