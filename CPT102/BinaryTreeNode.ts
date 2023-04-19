@@ -130,3 +130,19 @@ Deno.test("max heap", () => {
   console.log(root.toString());
   console.log(root.isHeap);
 });
+
+Deno.test("assessment", () => {
+  const root = new BinaryTreeNode(5);
+  root.left = new BinaryTreeNode(2);
+  root.right = new BinaryTreeNode(6);
+  root.left.left = new BinaryTreeNode(1);
+  root.left.right = new BinaryTreeNode(3);
+  root.right.right = new BinaryTreeNode(8);
+  root.left.right.right = new BinaryTreeNode(4);
+  root.right.right.left = new BinaryTreeNode(7);
+  root.right.right.right = new BinaryTreeNode(8);
+  root.right.right.right.right = new BinaryTreeNode(9);
+
+  console.log(root.toString());
+  console.log(root.collect("pre"));
+});
