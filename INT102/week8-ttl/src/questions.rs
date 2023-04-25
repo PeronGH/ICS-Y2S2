@@ -40,3 +40,27 @@ pub fn q3() {
 
     println!("Q3B: {:?}", result);
 }
+
+pub fn q4() {
+    let seq1 = "AATG";
+    let seq2 = "AGC";
+    let gap_penalty = -5;
+    let scoring_matrix = vec![
+        vec![2, -7, -5, -7],
+        vec![-7, 2, -7, -5],
+        vec![-5, -7, 2, -7],
+        vec![-7, -5, -7, 2],
+    ];
+
+    let (score_g, aligned_seq1_g, aligned_seq2_g) =
+        week8::global_alignment(seq1, seq2, gap_penalty, &scoring_matrix);
+    println!("Score: {}", score_g);
+    println!("Aligned Sequence 1: {}", aligned_seq1_g);
+    println!("Aligned Sequence 2: {}", aligned_seq2_g);
+
+    let (score_l, aligned_seq1_l, aligned_seq2_l) =
+        week8::local_alignment(seq1, seq2, gap_penalty, &scoring_matrix);
+    println!("Score: {}", score_l);
+    println!("Aligned Sequence 1: {}", aligned_seq1_l);
+    println!("Aligned Sequence 2: {}", aligned_seq2_l);
+}

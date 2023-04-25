@@ -1,3 +1,5 @@
+use std::cmp::{max, min};
+
 pub fn lcs_tab(str1: &str, str2: &str) -> usize {
     let m = str1.chars().count();
     let n = str2.chars().count();
@@ -69,5 +71,96 @@ pub fn lcs_brute_force(str1: &str, str2: &str) -> usize {
     } else {
         // If the first characters don't match, find the maximum length of LCS by considering both possibilities
         lcs_brute_force(&str1[1..], &str2).max(lcs_brute_force(&str1, &str2[1..]))
+    }
+}
+
+pub fn global_alignment(
+    seq1: &str,
+    seq2: &str,
+    gap_penalty: i32,
+    scoring_matrix: &Vec<Vec<i32>>,
+) -> (i32, String, String) {
+    let mut max_score = std::i32::MIN;
+    let mut aligned_seq1 = String::new();
+    let mut aligned_seq2 = String::new();
+
+    let sub_seq_pairs = seq1.chars().enumerate().flat_map(|(i, _)| {
+        seq2.chars()
+            .enumerate()
+            .map(move |(j, _)| (&seq1[0..=i], &seq2[0..=j]))
+    });
+
+    for (sub_seq1, sub_seq2) in sub_seq_pairs {
+        let score = alignment_score(sub_seq1, sub_seq2, gap_penalty, &scoring_matrix);
+
+        if score > max_score {
+            max_score = score;
+            aligned_seq1 = sub_seq1.to_string();
+            aligned_seq2 = sub_seq2.to_string();
+        }
+    }
+
+    (max_score, aligned_seq1, aligned_seq2)
+}
+
+pub fn local_alignment(
+    seq1: &str,
+    seq2: &str,
+    gap_penalty: i32,
+    scoring_matrix: &Vec<Vec<i32>>,
+) -> (i32, String, String) {
+    let mut max_score = i32::MIN;
+    let mut aligned_seq1 = String::new();
+    let mut aligned_seq2 = String::new();
+
+    let sub_seq_pairs = seq1.chars().enumerate().flat_map(|(i, _)| {
+        seq2.chars().enumerate().flat_map(move |(j, _)| {
+            (i..seq1.len())
+                .flat_map(move |k| (j..seq2.len()).map(move |l| (&seq1[i..=k], &seq2[j..=l])))
+        })
+    });
+
+    for (sub_seq1, sub_seq2) in sub_seq_pairs {
+        let score = alignment_score(sub_seq1, sub_seq2, gap_penalty, &scoring_matrix);
+
+        if score > max_score {
+            max_score = score;
+            aligned_seq1 = sub_seq1.to_string();
+            aligned_seq2 = sub_seq2.to_string();
+        }
+    }
+
+    (max_score, aligned_seq1, aligned_seq2)
+}
+
+fn alignment_score(
+    seq1: &str,
+    seq2: &str,
+    gap_penalty: i32,
+    scoring_matrix: &Vec<Vec<i32>>,
+) -> i32 {
+    let mut score = 0;
+
+    let shorter_len = min(seq1.len(), seq2.len());
+    let longer_len = max(seq1.len(), seq2.len());
+
+    for i in 0..shorter_len {
+        let char1 = nucleotide_to_index(seq1.chars().nth(i).unwrap());
+        let char2 = nucleotide_to_index(seq2.chars().nth(i).unwrap());
+        score += scoring_matrix[char1][char2];
+    }
+
+    score += (longer_len - shorter_len) as i32 * gap_penalty;
+
+    score
+}
+
+fn nucleotide_to_index(c: char) -> usize {
+    match c {
+        'A' => 0,
+        'C' => 1,
+        'G' => 2,
+        'T' => 3,
+        _ => panic!("Invalid nucleotide character"),
     }
 }
