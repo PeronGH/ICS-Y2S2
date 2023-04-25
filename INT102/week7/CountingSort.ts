@@ -39,9 +39,11 @@ function countingSort(arr: number[], maxValue: number): number[] {
 }
 
 // Example usage
-const arr: number[] = [4, 2, 2, 8, 3, 3, 1];
-const maxValue: number = Math.max(...arr);
+Deno.test("Counting Sort", () => {
+  const arr: number[] = [4, 2, 2, 8, 3, 3, 1];
+  const maxValue: number = Math.max(...arr);
 
-const sortedArray: number[] = countingSort(arr, maxValue);
+  const sortedArray: number[] = countingSort(arr, maxValue);
 
-console.log("Sorted Array:", sortedArray);
+  console.log("Sorted Array:", sortedArray);
+});

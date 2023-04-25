@@ -48,13 +48,15 @@ function horspool(text: string, pattern: string): number | null {
 }
 
 // Example usage
-const text = "The quick brown fox jumps over the lazy dog";
-const pattern = "jumps";
+Deno.test("Horspool's algorithm", () => {
+  const text = "TTATAGATCTGGTATTCTTTTATAGATCTCCTATTCTT";
+  const pattern = "TCCTATTCTT";
 
-const position = horspool(text, pattern);
+  const position = horspool(text, pattern);
 
-if (position !== null) {
-  console.log(`Pattern found at position: ${position}`);
-} else {
-  console.log("Pattern not found");
-}
+  if (position !== null) {
+    console.log(`Pattern found at position: ${position}`);
+  } else {
+    console.log("Pattern not found");
+  }
+});
