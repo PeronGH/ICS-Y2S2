@@ -1,11 +1,16 @@
-use petgraph::graph::{NodeIndex, UnGraph};
+use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
+use petgraph::EdgeType;
 use std::f64;
 
 // Function to compute the shortest path from the source node to all other nodes in the graph.
 // It returns an Option<Vec<f64>> containing the shortest path distances.
 // If a negative cycle is detected, it returns None.
-pub fn bellman_ford(graph: &UnGraph<usize, f64>, source: NodeIndex) -> Option<Vec<f64>> {
+pub fn bellman_ford<N, E>(graph: &Graph<N, f64, E>, source: NodeIndex) -> Option<Vec<f64>>
+where
+    N: Clone,
+    E: EdgeType,
+{
     // Get the number of vertices in the graph.
     let num_vertices = graph.node_count();
 
@@ -49,7 +54,11 @@ pub fn bellman_ford(graph: &UnGraph<usize, f64>, source: NodeIndex) -> Option<Ve
 // Function to compute the shortest paths between all pairs of nodes in a directed, weighted graph.
 // If a negative cycle is detected, it returns None.
 // Otherwise, it returns a two-dimensional Vec containing the shortest path distances between all pairs of nodes.
-pub fn floyd_warshall(graph: &UnGraph<usize, f64>) -> Option<Vec<Vec<f64>>> {
+pub fn floyd_warshall<N, E>(graph: &Graph<N, f64, E>) -> Option<Vec<Vec<f64>>>
+where
+    N: Clone,
+    E: EdgeType,
+{
     // Get the number of vertices in the graph.
     let num_vertices = graph.node_count();
 

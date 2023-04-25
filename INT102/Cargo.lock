@@ -50,3 +50,11 @@ dependencies = [
 [[package]]
 name = "week8"
 version = "0.1.0"
+
+[[package]]
+name = "week8-ttl"
+version = "0.1.0"
+dependencies = [
+ "petgraph",
+ "week7",
+]
