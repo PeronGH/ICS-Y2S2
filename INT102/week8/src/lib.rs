@@ -58,3 +58,16 @@ pub fn lcs_memo(str1: &str, str2: &str, m: usize, n: usize, memo: &mut Vec<Vec<i
     // Store the calculated LCS length in the memoization table and return the result
     memo[m][n] as usize
 }
+
+pub fn lcs_brute_force(str1: &str, str2: &str) -> usize {
+    if str1.is_empty() || str2.is_empty() {
+        // Base case: If either of the strings is empty, the length of LCS is 0
+        0
+    } else if str1.chars().nth(0) == str2.chars().nth(0) {
+        // If the first characters of both strings are the same, increment LCS length and continue the search
+        1 + lcs_brute_force(&str1[1..], &str2[1..])
+    } else {
+        // If the first characters don't match, find the maximum length of LCS by considering both possibilities
+        lcs_brute_force(&str1[1..], &str2).max(lcs_brute_force(&str1, &str2[1..]))
+    }
+}
