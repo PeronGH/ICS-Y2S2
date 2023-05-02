@@ -1,4 +1,3 @@
-use crate::lib;
 use petgraph::prelude::DiGraph;
 
 pub fn q1() {
@@ -25,18 +24,18 @@ pub fn q1() {
 
 pub fn q2() {
     let mut arr = [2, 3, 4, 3, 2, 1, 1, 2];
-    lib::counting_sort(&mut arr);
+    week7::counting_sort(&mut arr);
     println!("Q2: {:?}", arr);
 }
 
 pub fn q3() {
     let pattern = "TCCTATTCTT";
-    let table = lib::horspool::create_shift_table(pattern);
+    let table = week7::horspool::create_shift_table(pattern);
 
     println!("Q3A: {:?}", table);
 
     let text = "TTATAGATCTGGTATTCTTTTATAGATCTCCTATTCTT";
-    let result = lib::horspool::search(text, pattern);
+    let result = week7::horspool::search(text, pattern);
 
     println!("Q3B: {:?}", result);
 }

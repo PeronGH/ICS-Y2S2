@@ -1,4 +1,3 @@
-mod lib;
 mod questions;
 
 fn main() {
