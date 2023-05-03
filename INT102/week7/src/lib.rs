@@ -154,29 +154,23 @@ pub mod horspool {
         let shift_table = create_shift_table(pattern);
         let (n, m) = (text.len(), pattern.len());
 
-        let mut i = 0;
-        while i <= n - m {
-            // Step 2: Compare the rightmost character of the pattern with the corresponding character in the text
-            let last_char_pattern = pattern.chars().nth(m - 1).unwrap();
-            let last_char_text = text.chars().nth(i + m - 1).unwrap();
+        let mut skip = 0;
 
-            if last_char_pattern == last_char_text {
-                // Step 3: If the rightmost characters match, compare the rest of the characters
-                if pattern[..m - 1]
-                    .chars()
-                    .zip(text[i..i + m - 1].chars())
-                    .all(|(p_ch, t_ch)| p_ch == t_ch)
-                {
-                    // If all characters match, return the position
-                    return Some(i);
-                }
+        while skip <= n - m {
+            if text
+                .chars()
+                .skip(skip)
+                .collect::<String>()
+                .starts_with(pattern)
+            {
+                return Some(skip);
             }
 
-            // Step 4: If there's a mismatch, shift the pattern using the shift table
-            i += shift_table.get(&last_char_text).unwrap_or(&m);
+            skip += shift_table
+                .get(&text.chars().nth(skip + m - 1).unwrap())
+                .unwrap_or(&m);
         }
 
-        // Step 5: If the pattern goes beyond the end of the text, return None (no match found)
         None
     }
 }
