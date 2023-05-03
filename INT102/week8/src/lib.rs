@@ -1,5 +1,3 @@
-use std::cmp::{max, min};
-
 pub fn lcs_tab(str1: &str, str2: &str) -> (usize, Vec<Vec<usize>>) {
     let m = str1.chars().count();
     let n = str2.chars().count();
