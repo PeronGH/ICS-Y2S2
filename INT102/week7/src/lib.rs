@@ -150,20 +150,23 @@ pub mod horspool {
             .collect() // Step 1.2: Collect shifts into a HashMap
     }
 
-    pub fn search(text: &str, pattern: &str) -> Option<usize> {
+    pub fn search(text: &str, pattern: &str) -> (Option<usize>, usize) {
         let shift_table = create_shift_table(pattern);
         let (n, m) = (text.len(), pattern.len());
 
         let mut skip = 0;
+        let mut cmp_count = 0;
 
         while skip <= n - m {
+            cmp_count += 1;
+
             if text
                 .chars()
                 .skip(skip)
                 .collect::<String>()
                 .starts_with(pattern)
             {
-                return Some(skip);
+                return (Some(skip), cmp_count);
             }
 
             skip += shift_table
@@ -171,6 +174,6 @@ pub mod horspool {
                 .unwrap_or(&m);
         }
 
-        None
+        (None, cmp_count)
     }
 }
