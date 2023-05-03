@@ -151,29 +151,36 @@ pub mod horspool {
     }
 
     pub fn search(text: &str, pattern: &str) -> (Option<usize>, usize) {
+        // Step 2: Generate the shift table for the given pattern
         let shift_table = create_shift_table(pattern);
         let (n, m) = (text.len(), pattern.len());
 
+        // Step 3: Initialize skip and comparison count variables
         let mut skip = 0;
         let mut cmp_count = 0;
 
+        // Step 4: Iterate through the text, comparing with the pattern
         while skip <= n - m {
             cmp_count += 1;
 
+            // Step 4.1: Check if the pattern starts at the current position in the text
             if text
                 .chars()
                 .skip(skip)
                 .collect::<String>()
                 .starts_with(pattern)
             {
+                // Step 4.1.1: If the pattern is found, return the position and comparison count
                 return (Some(skip), cmp_count);
             }
 
+            // Step 4.2: Update the skip value based on the shift table
             skip += shift_table
                 .get(&text.chars().skip(skip).nth(m - 1).unwrap())
                 .unwrap_or(&m);
         }
 
+        // Step 5: If the pattern is not found, return None and the comparison count
         (None, cmp_count)
     }
 }
