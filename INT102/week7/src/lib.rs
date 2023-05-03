@@ -170,7 +170,7 @@ pub mod horspool {
             }
 
             skip += shift_table
-                .get(&text.chars().nth(skip + m - 1).unwrap())
+                .get(&text.chars().skip(skip).nth(m - 1).unwrap())
                 .unwrap_or(&m);
         }
 
