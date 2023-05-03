@@ -5,7 +5,7 @@ fn main() {
     let str2 = "BDCABA";
 
     println!("LCS length: {}", lcs_brute_force(str1, str2));
-    println!("LCS length: {}", lcs_tab(str1, str2));
+    println!("LCS length: {:?}", lcs_tab(str1, str2));
 
     let m = str1.chars().count();
     let n = str2.chars().count();

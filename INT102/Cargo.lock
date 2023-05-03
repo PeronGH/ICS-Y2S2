@@ -6,7 +6,9 @@ version = 3
 name = "assessment-2"
 version = "0.1.0"
 dependencies = [
+ "petgraph",
  "week7",
+ "week8",
 ]
 
 [[package]]

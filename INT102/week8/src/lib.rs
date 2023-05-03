@@ -1,6 +1,6 @@
 use std::cmp::{max, min};
 
-pub fn lcs_tab(str1: &str, str2: &str) -> usize {
+pub fn lcs_tab(str1: &str, str2: &str) -> (usize, Vec<Vec<usize>>) {
     let m = str1.chars().count();
     let n = str2.chars().count();
     // Create a 2D table to store the lengths of LCS for all subproblems
@@ -26,7 +26,7 @@ pub fn lcs_tab(str1: &str, str2: &str) -> usize {
     }
     // The value in the bottom-right cell of the DP table (dp[m][n])
     // represents the length of the LCS for the entire input strings
-    dp[m][n]
+    (dp[m][n], dp)
 }
 
 pub fn lcs_memo(str1: &str, str2: &str, m: usize, n: usize, memo: &mut Vec<Vec<isize>>) -> usize {
