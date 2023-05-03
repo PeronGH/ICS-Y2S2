@@ -99,7 +99,19 @@ pub fn global_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = std::cmp::max(diagonal, std::cmp::max(up, left));
+            dp_table[i][j] = diagonal.max(up).max(left);
+
+            if dp_table[i][j] != 0 {
+                let selected_name = if dp_table[i][j] == diagonal {
+                    "diagonal"
+                } else if dp_table[i][j] == up {
+                    "up"
+                } else {
+                    "left"
+                };
+
+                println!("({}, {}) is {}", i, j, selected_name);
+            }
         }
     }
 
@@ -223,7 +235,19 @@ pub fn local_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = std::cmp::max(diagonal, std::cmp::max(up, std::cmp::max(left, 0)));
+            dp_table[i][j] = diagonal.max(up).max(left).max(0);
+
+            if dp_table[i][j] != 0 {
+                let selected_name = if dp_table[i][j] == diagonal {
+                    "diagonal"
+                } else if dp_table[i][j] == up {
+                    "up"
+                } else {
+                    "left"
+                };
+
+                println!("({}, {}) is {}", i, j, selected_name);
+            }
 
             if dp_table[i][j] > max_value {
                 max_value = dp_table[i][j];
