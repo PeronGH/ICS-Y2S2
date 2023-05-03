@@ -1,5 +1,3 @@
-mod lib;
-
 use petgraph::prelude::UnGraph;
 
 fn main() {
@@ -20,14 +18,14 @@ fn main() {
     graph.add_edge(d, e, 3.0);
 
     let source = a;
-    let bellman_ford_distances = lib::bellman_ford(&graph, source).unwrap();
+    let bellman_ford_distances = week7::bellman_ford(&graph, source).unwrap();
 
     println!(
         "Shortest path distances from node {:?} are: {:?}",
         source, bellman_ford_distances
     );
 
-    let floyd_warshall_distances = lib::floyd_warshall(&graph);
+    let floyd_warshall_distances = week7::floyd_warshall(&graph);
 
     println!(
         "Shortest path distances are: {:?}",
