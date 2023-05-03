@@ -78,7 +78,7 @@ pub fn global_alignment(
     map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, Vec<(String, String)>) {
+) -> (i32, Vec<(String, String)>, Vec<Vec<i32>>) {
     let seq1_len = seq1.len();
     let seq2_len = seq2.len();
     let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
@@ -129,7 +129,7 @@ pub fn global_alignment(
         "",
     );
 
-    (score, alignments)
+    (score, alignments, dp_table)
 }
 
 fn traceback_global(
@@ -220,7 +220,7 @@ pub fn local_alignment(
     map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, Vec<(String, String)>) {
+) -> (i32, Vec<(String, String)>, Vec<Vec<i32>>) {
     let seq1_len = seq1.len();
     let seq2_len = seq2.len();
     let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
@@ -275,7 +275,7 @@ pub fn local_alignment(
         }
     }
 
-    (max_value, alignments)
+    (max_value, alignments, dp_table)
 }
 
 fn traceback_local(
@@ -345,4 +345,14 @@ fn traceback_local(
     }
 
     alignments
+}
+
+pub fn nucleotide_to_index(c: char) -> usize {
+    match c {
+        'A' => 0,
+        'C' => 1,
+        'G' => 2,
+        'T' => 3,
+        _ => panic!("Invalid nucleotide character"),
+    }
 }

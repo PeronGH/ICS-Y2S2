@@ -51,33 +51,23 @@ pub fn q4() {
         vec![-7, -5, -7, 2],
     ];
 
-    let (score_g, seq_g) = week8::global_alignment(
+    let (score_g, seq_g, ..) = week8::global_alignment(
         seq1,
         seq2,
-        nucleotide_to_index,
+        week8::nucleotide_to_index,
         gap_penalty,
         &scoring_matrix,
     );
     println!("Score: {}", score_g);
     println!("Aligned Sequences: {:?}", seq_g);
 
-    let (score_l, seq_l) = week8::local_alignment(
+    let (score_l, seq_l, ..) = week8::local_alignment(
         seq1,
         seq2,
-        nucleotide_to_index,
+        week8::nucleotide_to_index,
         gap_penalty,
         &scoring_matrix,
     );
     println!("Score: {}", score_l);
     println!("Aligned Sequence: {:?}", seq_l);
-}
-
-fn nucleotide_to_index(c: char) -> usize {
-    match c {
-        'A' => 0,
-        'C' => 1,
-        'G' => 2,
-        'T' => 3,
-        _ => panic!("Invalid nucleotide character"),
-    }
 }
