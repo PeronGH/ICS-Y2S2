@@ -151,9 +151,13 @@ pub mod horspool {
     }
 
     pub fn search(text: &str, pattern: &str) -> (Option<usize>, usize) {
+        let (n, m) = (text.len(), pattern.len());
+        if m > n {
+            return (None, 0);
+        }
+
         // Step 2: Generate the shift table for the given pattern
         let shift_table = create_shift_table(pattern);
-        let (n, m) = (text.len(), pattern.len());
 
         // Step 3: Initialize skip and comparison count variables
         let mut skip = 0;
