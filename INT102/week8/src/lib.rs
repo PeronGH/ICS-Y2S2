@@ -110,7 +110,7 @@ pub fn global_alignment(
                     "left"
                 };
 
-                println!("({}, {}) is {}", i, j, selected_name);
+                println!("({}, {}) is {}", i + 1, j + 1, selected_name);
             }
         }
     }
@@ -246,7 +246,7 @@ pub fn local_alignment(
                     "left"
                 };
 
-                println!("({}, {}) is {}", i, j, selected_name);
+                println!("({}, {}) is {}", i + 1, j + 1, selected_name);
             }
 
             if dp_table[i][j] > max_value {
