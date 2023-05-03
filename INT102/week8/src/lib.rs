@@ -77,90 +77,250 @@ pub fn lcs_brute_force(str1: &str, str2: &str) -> usize {
 pub fn global_alignment(
     seq1: &str,
     seq2: &str,
+    map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, String, String) {
-    let mut max_score = std::i32::MIN;
-    let mut aligned_seq1 = String::new();
-    let mut aligned_seq2 = String::new();
+) -> (i32, Vec<(String, String)>) {
+    let seq1_len = seq1.len();
+    let seq2_len = seq2.len();
+    let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
 
-    let sub_seq_pairs = seq1.chars().enumerate().flat_map(|(i, _)| {
-        seq2.chars()
-            .enumerate()
-            .map(move |(j, _)| (&seq1[0..=i], &seq2[0..=j]))
-    });
+    for i in 0..=seq1_len {
+        dp_table[i][0] = i as i32 * gap_penalty;
+    }
 
-    for (sub_seq1, sub_seq2) in sub_seq_pairs {
-        let score = alignment_score(sub_seq1, sub_seq2, gap_penalty, &scoring_matrix);
+    for j in 0..=seq2_len {
+        dp_table[0][j] = j as i32 * gap_penalty;
+    }
 
-        if score > max_score {
-            max_score = score;
-            aligned_seq1 = sub_seq1.to_string();
-            aligned_seq2 = sub_seq2.to_string();
+    for i in 1..=seq1_len {
+        for j in 1..=seq2_len {
+            let match_score = scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
+                [map_fn(seq2.chars().nth(j - 1).unwrap())];
+            let diagonal = dp_table[i - 1][j - 1] + match_score;
+            let up = dp_table[i - 1][j] + gap_penalty;
+            let left = dp_table[i][j - 1] + gap_penalty;
+
+            dp_table[i][j] = std::cmp::max(diagonal, std::cmp::max(up, left));
         }
     }
 
-    (max_score, aligned_seq1, aligned_seq2)
+    let score = dp_table[seq1_len][seq2_len];
+    let alignments = traceback_global(
+        seq1_len,
+        seq2_len,
+        seq1,
+        seq2,
+        map_fn,
+        gap_penalty,
+        scoring_matrix,
+        &dp_table,
+        "",
+        "",
+    );
+
+    (score, alignments)
+}
+
+fn traceback_global(
+    i: usize,
+    j: usize,
+    seq1: &str,
+    seq2: &str,
+    map_fn: fn(char) -> usize,
+    gap_penalty: i32,
+    scoring_matrix: &Vec<Vec<i32>>,
+    dp_table: &Vec<Vec<i32>>,
+    aligned_seq1: &str,
+    aligned_seq2: &str,
+) -> Vec<(String, String)> {
+    if i == 0 && j == 0 {
+        return vec![(aligned_seq1.to_string(), aligned_seq2.to_string())];
+    }
+
+    let mut alignments = vec![];
+
+    if i > 0
+        && j > 0
+        && dp_table[i][j]
+            == dp_table[i - 1][j - 1]
+                + scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
+                    [map_fn(seq2.chars().nth(j - 1).unwrap())]
+    {
+        let mut new_seq1 = aligned_seq1.to_string();
+        let mut new_seq2 = aligned_seq2.to_string();
+        new_seq1.insert(0, seq1.chars().nth(i - 1).unwrap());
+        new_seq2.insert(0, seq2.chars().nth(j - 1).unwrap());
+        alignments.extend(traceback_global(
+            i - 1,
+            j - 1,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            &new_seq1,
+            &new_seq2,
+        ));
+    }
+    if i > 0 && dp_table[i][j] == dp_table[i - 1][j] + gap_penalty {
+        let mut new_seq1 = aligned_seq1.to_string();
+        let mut new_seq2 = aligned_seq2.to_string();
+        new_seq1.insert(0, seq1.chars().nth(i - 1).unwrap());
+        new_seq2.insert(0, '-');
+        alignments.extend(traceback_global(
+            i - 1,
+            j,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            &new_seq1,
+            &new_seq2,
+        ));
+    }
+    if j > 0 && dp_table[i][j] == dp_table[i][j - 1] + gap_penalty {
+        let mut new_seq1 = aligned_seq1.to_string();
+        let mut new_seq2 = aligned_seq2.to_string();
+        new_seq1.insert(0, '-');
+        new_seq2.insert(0, seq2.chars().nth(j - 1).unwrap());
+        alignments.extend(traceback_global(
+            i,
+            j - 1,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            &new_seq1,
+            &new_seq2,
+        ));
+    }
+
+    alignments
 }
 
 pub fn local_alignment(
     seq1: &str,
     seq2: &str,
+    map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, String, String) {
-    let mut max_score = i32::MIN;
-    let mut aligned_seq1 = String::new();
-    let mut aligned_seq2 = String::new();
+) -> (i32, Vec<(String, String)>) {
+    let seq1_len = seq1.len();
+    let seq2_len = seq2.len();
+    let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
 
-    let sub_seq_pairs = seq1.chars().enumerate().flat_map(|(i, _)| {
-        seq2.chars().enumerate().flat_map(move |(j, _)| {
-            (i..seq1.len())
-                .flat_map(move |k| (j..seq2.len()).map(move |l| (&seq1[i..=k], &seq2[j..=l])))
-        })
-    });
+    let mut max_value = 0;
 
-    for (sub_seq1, sub_seq2) in sub_seq_pairs {
-        let score = alignment_score(sub_seq1, sub_seq2, gap_penalty, &scoring_matrix);
+    for i in 1..=seq1_len {
+        for j in 1..=seq2_len {
+            let match_score = scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
+                [map_fn(seq2.chars().nth(j - 1).unwrap())];
+            let diagonal = dp_table[i - 1][j - 1] + match_score;
+            let up = dp_table[i - 1][j] + gap_penalty;
+            let left = dp_table[i][j - 1] + gap_penalty;
 
-        if score > max_score {
-            max_score = score;
-            aligned_seq1 = sub_seq1.to_string();
-            aligned_seq2 = sub_seq2.to_string();
+            dp_table[i][j] = std::cmp::max(diagonal, std::cmp::max(up, std::cmp::max(left, 0)));
+
+            if dp_table[i][j] > max_value {
+                max_value = dp_table[i][j];
+            }
         }
     }
 
-    (max_score, aligned_seq1, aligned_seq2)
+    let mut alignments = vec![];
+    for i in 1..=seq1_len {
+        for j in 1..=seq2_len {
+            if dp_table[i][j] == max_value {
+                alignments.extend(traceback_local(
+                    i,
+                    j,
+                    seq1,
+                    seq2,
+                    map_fn,
+                    gap_penalty,
+                    scoring_matrix,
+                    &dp_table,
+                    String::new(),
+                    String::new(),
+                ));
+            }
+        }
+    }
+
+    (max_value, alignments)
 }
 
-fn alignment_score(
+fn traceback_local(
+    i: usize,
+    j: usize,
     seq1: &str,
     seq2: &str,
+    map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> i32 {
-    let mut score = 0;
-
-    let shorter_len = min(seq1.len(), seq2.len());
-    let longer_len = max(seq1.len(), seq2.len());
-
-    for i in 0..shorter_len {
-        let char1 = nucleotide_to_index(seq1.chars().nth(i).unwrap());
-        let char2 = nucleotide_to_index(seq2.chars().nth(i).unwrap());
-        score += scoring_matrix[char1][char2];
+    dp_table: &Vec<Vec<i32>>,
+    aligned_seq1: String,
+    aligned_seq2: String,
+) -> Vec<(String, String)> {
+    if dp_table[i][j] == 0 {
+        return vec![(aligned_seq1, aligned_seq2)];
     }
 
-    score += (longer_len - shorter_len) as i32 * gap_penalty;
+    let mut alignments = vec![];
 
-    score
-}
+    let match_score = scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
+        [map_fn(seq2.chars().nth(j - 1).unwrap())];
 
-fn nucleotide_to_index(c: char) -> usize {
-    match c {
-        'A' => 0,
-        'C' => 1,
-        'G' => 2,
-        'T' => 3,
-        _ => panic!("Invalid nucleotide character"),
+    if dp_table[i][j] == dp_table[i - 1][j - 1] + match_score {
+        alignments.extend(traceback_local(
+            i - 1,
+            j - 1,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            format!("{}{}", aligned_seq1, seq1.chars().nth(i - 1).unwrap()),
+            format!("{}{}", aligned_seq2, seq2.chars().nth(j - 1).unwrap()),
+        ));
     }
+
+    if dp_table[i][j] == dp_table[i - 1][j] + gap_penalty {
+        alignments.extend(traceback_local(
+            i - 1,
+            j,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            format!("{}{}", aligned_seq1, seq1.chars().nth(i - 1).unwrap()),
+            format!("{}{}", aligned_seq2, "-"),
+        ));
+    }
+
+    if dp_table[i][j] == dp_table[i][j - 1] + gap_penalty {
+        alignments.extend(traceback_local(
+            i,
+            j - 1,
+            seq1,
+            seq2,
+            map_fn,
+            gap_penalty,
+            scoring_matrix,
+            dp_table,
+            format!("{}{}", aligned_seq1, "-"),
+            format!("{}{}", aligned_seq2, seq2.chars().nth(j - 1).unwrap()),
+        ));
+    }
+
+    alignments
 }
