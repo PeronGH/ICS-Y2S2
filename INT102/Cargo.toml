@@ -1,2 +1,2 @@
 [workspace]
-members = ["week7", "week8", "week8-ttl"]
+members = ["week7", "week8", "week8-ttl", "assessment-2"]

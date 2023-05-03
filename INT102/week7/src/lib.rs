@@ -156,22 +156,24 @@ pub mod horspool {
 
         let mut i = 0;
         while i <= n - m {
-            // Step 2: Compare pattern and text from the current position
-            if pattern
-                .chars()
-                .zip(text[i..].chars())
-                .all(|(p_ch, t_ch)| p_ch == t_ch)
-            {
-                // Step 3: If all characters match, return the position
-                return Some(i);
+            // Step 2: Compare the rightmost character of the pattern with the corresponding character in the text
+            let last_char_pattern = pattern.chars().nth(m - 1).unwrap();
+            let last_char_text = text.chars().nth(i + m - 1).unwrap();
+
+            if last_char_pattern == last_char_text {
+                // Step 3: If the rightmost characters match, compare the rest of the characters
+                if pattern[..m - 1]
+                    .chars()
+                    .zip(text[i..i + m - 1].chars())
+                    .all(|(p_ch, t_ch)| p_ch == t_ch)
+                {
+                    // If all characters match, return the position
+                    return Some(i);
+                }
             }
 
             // Step 4: If there's a mismatch, shift the pattern using the shift table
-            let next_char = text
-                .chars()
-                .nth(i + m - 1)
-                .unwrap_or_else(|| pattern.chars().next().unwrap());
-            i += shift_table.get(&next_char).unwrap_or(&m);
+            i += shift_table.get(&last_char_text).unwrap_or(&m);
         }
 
         // Step 5: If the pattern goes beyond the end of the text, return None (no match found)
