@@ -6,6 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-petgraph = "0.6.3"
+petgraph = "0.6"
 week7 = { path = "../week7" }
 week8 = { path = "../week8" }
