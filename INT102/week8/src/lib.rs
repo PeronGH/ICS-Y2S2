@@ -105,7 +105,7 @@ pub fn global_alignment(
     }
 
     println!(
-        "         {}|",
+        " |   |   {}|",
         seq2.chars()
             .map(|c| String::from(c))
             .collect::<Vec<_>>()
@@ -113,7 +113,7 @@ pub fn global_alignment(
     );
 
     // print row zero
-    print!("  ");
+    print!(" |");
     for n in &dp_table[0] {
         print!("{:>3}| ", n);
     }
@@ -263,7 +263,7 @@ pub fn local_alignment(
     let mut max_value = 0;
 
     println!(
-        "        {}|",
+        " |   |  {}|",
         seq2.chars()
             .map(|c| String::from(c))
             .collect::<Vec<_>>()

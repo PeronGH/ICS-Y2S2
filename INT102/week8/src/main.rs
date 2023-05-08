@@ -14,7 +14,7 @@ fn main() {
 
     let gap_penalty = -5;
     let scoring_matrix = vec![
-        vec![-2, -7, -5, -7],
+        vec![2, -7, -5, -7],
         vec![-7, 2, -7, -5],
         vec![-5, -7, 2, -7],
         vec![-7, -5, -7, 2],
