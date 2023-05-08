@@ -104,7 +104,28 @@ pub fn global_alignment(
         dp_table[0][j] = j as i32 * gap_penalty;
     }
 
+    println!(
+        "         {}|",
+        seq2.chars()
+            .map(|c| String::from(c))
+            .collect::<Vec<_>>()
+            .join("|   ")
+    );
+
+    // print row zero
+    print!("  ");
+    for n in &dp_table[0] {
+        print!("{:>3}| ", n);
+    }
+    println!();
+
     for i in 1..=seq1_len {
+        print!(
+            "{}|{:>3}|",
+            seq1.chars().nth(i - 1).unwrap(),
+            dp_table[i][0]
+        );
+
         for j in 1..=seq2_len {
             let match_score = scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
                 [map_fn(seq2.chars().nth(j - 1).unwrap())];
@@ -122,7 +143,7 @@ pub fn global_alignment(
                 print!("←");
                 left
             };
-            print!("{:>4} ", dp_table[i][j]);
+            print!("{:>3}|", dp_table[i][j]);
         }
         println!();
     }
@@ -241,7 +262,27 @@ pub fn local_alignment(
 
     let mut max_value = 0;
 
+    println!(
+        "        {}|",
+        seq2.chars()
+            .map(|c| String::from(c))
+            .collect::<Vec<_>>()
+            .join("|  ")
+    );
+
+    print!(" |");
+    for n in &dp_table[0] {
+        print!("{:>3}|", n);
+    }
+    println!();
+
     for i in 1..=seq1_len {
+        print!(
+            "{}| {:>2}|",
+            seq1.chars().nth(i - 1).unwrap(),
+            dp_table[i][0]
+        );
+
         for j in 1..=seq2_len {
             let match_score = scoring_matrix[map_fn(seq1.chars().nth(i - 1).unwrap())]
                 [map_fn(seq2.chars().nth(j - 1).unwrap())];
@@ -264,7 +305,7 @@ pub fn local_alignment(
                 dp_table[i][j] = 0;
             }
 
-            print!("{:>2} ", dp_table[i][j]);
+            print!("{:>2}|", dp_table[i][j]);
 
             if dp_table[i][j] > max_value {
                 max_value = dp_table[i][j];

@@ -2,7 +2,10 @@
     "deno.enable": true,
     "python.analysis.typeCheckingMode": "basic",
     "cSpell.words": [
+        "AATG",
+        "ABCBDAB",
         "astype",
+        "BDCABA",
         "heapify",
         "horspool",
         "matplotlib",

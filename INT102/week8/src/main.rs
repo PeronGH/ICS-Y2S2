@@ -20,8 +20,8 @@ fn main() {
         vec![-7, -5, -7, 2],
     ];
 
-    let seq1 = "AATG";
-    let seq2 = "AGC";
+    let seq1 = "AGC";
+    let seq2 = "AATG";
 
     let (score_g, alignments_g) = global_alignment(
         seq1,
