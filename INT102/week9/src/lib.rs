@@ -1,6 +1,8 @@
+use std::fmt::Debug;
+
 use petgraph::graph::{NodeIndex, UnGraph};
 
-pub fn travelling_salesman<N: Clone>(
+pub fn travelling_salesman<N: Clone + Debug>(
     graph: &UnGraph<N, f64>,
     start_node: NodeIndex,
 ) -> (Vec<NodeIndex>, f64) {
@@ -21,7 +23,7 @@ pub fn travelling_salesman<N: Clone>(
     (best_tour, best_cost)
 }
 
-fn tsp_helper<N: Clone>(
+fn tsp_helper<N: Clone + Debug>(
     graph: &UnGraph<N, f64>,
     current: NodeIndex,
     path: Vec<NodeIndex>,
@@ -54,6 +56,16 @@ fn tsp_helper<N: Clone>(
             if new_cost < *best_cost {
                 let mut new_path = path.clone();
                 new_path.push(neighbor);
+
+                println!(
+                    "\nPath: {:?}",
+                    new_path
+                        .iter()
+                        .map(|i| graph.node_weight(*i).unwrap())
+                        .collect::<Vec<_>>()
+                );
+                println!("Cost: {:?}", new_cost);
+
                 tsp_helper(graph, neighbor, new_path, new_cost, best_tour, best_cost);
             }
         }
