@@ -290,20 +290,15 @@ pub fn local_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = if diagonal >= up && diagonal >= left {
-                print!("↖");
-                diagonal
-            } else if up >= diagonal && up >= left {
-                print!("↑");
-                up
-            } else {
-                print!("←");
-                left
+            dp_table[i][j] = {
+                let max_value = diagonal.max(up).max(left).max(0);
+                if diagonal == max_value {
+                    print!("↖");
+                } else {
+                    print!(" ");
+                }
+                max_value
             };
-
-            if dp_table[i][j] < 0 {
-                dp_table[i][j] = 0;
-            }
 
             print!("{:>2}|", dp_table[i][j]);
 

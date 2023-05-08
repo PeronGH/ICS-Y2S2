@@ -32,7 +32,11 @@ fn main() {
     );
 
     println!("Score: {}", score_g);
-    println!("Alignments: {:?}", alignments_g);
+    println!("Alignments:");
+    for (a1, a2) in alignments_g {
+        println!("\n{}\n{}", a1, a2);
+    }
+    println!();
 
     let (score_l, alignments_l) = local_alignment(
         seq1,
@@ -43,5 +47,9 @@ fn main() {
     );
 
     println!("Score: {}", score_l);
-    println!("Alignments: {:?}", alignments_l);
+    println!("Alignments:");
+    for (a1, a2) in alignments_l {
+        println!("\n{}\n{}", a1, a2);
+    }
+    println!();
 }
