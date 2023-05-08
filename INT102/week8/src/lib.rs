@@ -368,8 +368,8 @@ fn traceback_local(
             gap_penalty,
             scoring_matrix,
             dp_table,
-            format!("{}{}", aligned_seq1, seq1.chars().nth(i - 1).unwrap()),
-            format!("{}{}", aligned_seq2, seq2.chars().nth(j - 1).unwrap()),
+            format!("{}{}", seq1.chars().nth(i - 1).unwrap(), aligned_seq1),
+            format!("{}{}", seq2.chars().nth(j - 1).unwrap(), aligned_seq2),
         ));
     }
 
