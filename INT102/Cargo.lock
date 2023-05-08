@@ -9,6 +9,7 @@ dependencies = [
  "petgraph",
  "week7",
  "week8",
+ "week9",
 ]
 
 [[package]]
@@ -67,4 +68,11 @@ dependencies = [
  "petgraph",
  "week7",
  "week8",
+]
+
+[[package]]
+name = "week9"
+version = "0.1.0"
+dependencies = [
+ "petgraph",
 ]
