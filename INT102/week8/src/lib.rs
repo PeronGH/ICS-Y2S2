@@ -122,7 +122,7 @@ pub fn global_alignment(
                 print!("←");
                 left
             };
-            print!("{:>2} ", dp_table[i][j]);
+            print!("{:>4} ", dp_table[i][j]);
         }
         println!();
     }
@@ -264,7 +264,7 @@ pub fn local_alignment(
                 dp_table[i][j] = 0;
             }
 
-            print!("{} ", dp_table[i][j]);
+            print!("{:>2} ", dp_table[i][j]);
 
             if dp_table[i][j] > max_value {
                 max_value = dp_table[i][j];
