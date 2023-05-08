@@ -1,4 +1,6 @@
-pub fn lcs_tab(str1: &str, str2: &str) -> (usize, Vec<Vec<usize>>) {
+pub fn lcs_tab(str1: &str, str2: &str) -> usize {
+    println!("--- Longest Common Subsequence ---");
+
     let m = str1.chars().count();
     let n = str2.chars().count();
     // Create a 2D table to store the lengths of LCS for all subproblems
@@ -13,18 +15,27 @@ pub fn lcs_tab(str1: &str, str2: &str) -> (usize, Vec<Vec<usize>>) {
             // (indicated by the ↖ arrow)
             if str1.chars().nth(i - 1) == str2.chars().nth(j - 1) {
                 dp[i][j] = 1 + dp[i - 1][j - 1];
+                print!("↖")
             } else {
                 // If the characters at the current positions do not match,
                 // the LCS length is the maximum of the lengths of the LCS
                 // for the previous character in the first string (indicated by the ↑ arrow)
                 // and the previous character in the second string (indicated by the ← arrow)
-                dp[i][j] = usize::max(dp[i - 1][j], dp[i][j - 1]);
+                dp[i][j] = if dp[i - 1][j] > dp[i][j - 1] {
+                    print!("↑");
+                    dp[i - 1][j]
+                } else {
+                    print!("←");
+                    dp[i][j - 1]
+                };
             }
+            print!("{} ", dp[i][j])
         }
+        println!();
     }
     // The value in the bottom-right cell of the DP table (dp[m][n])
     // represents the length of the LCS for the entire input strings
-    (dp[m][n], dp)
+    dp[m][n]
 }
 
 pub fn lcs_memo(str1: &str, str2: &str, m: usize, n: usize, memo: &mut Vec<Vec<isize>>) -> usize {
@@ -78,7 +89,9 @@ pub fn global_alignment(
     map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, Vec<(String, String)>, Vec<Vec<i32>>) {
+) -> (i32, Vec<(String, String)>) {
+    println!("--- Global Alignment ---");
+
     let seq1_len = seq1.len();
     let seq2_len = seq2.len();
     let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
@@ -99,20 +112,19 @@ pub fn global_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = diagonal.max(up).max(left);
-
-            if dp_table[i][j] != 0 {
-                let selected_name = if dp_table[i][j] == diagonal {
-                    "diagonal"
-                } else if dp_table[i][j] == up {
-                    "up"
-                } else {
-                    "left"
-                };
-
-                println!("({}, {}) is {}", i + 1, j + 1, selected_name);
-            }
+            dp_table[i][j] = if diagonal >= up && diagonal >= left {
+                print!("↖");
+                diagonal
+            } else if up >= diagonal && up >= left {
+                print!("↑");
+                up
+            } else {
+                print!("←");
+                left
+            };
+            print!("{:>2} ", dp_table[i][j]);
         }
+        println!();
     }
 
     let score = dp_table[seq1_len][seq2_len];
@@ -129,7 +141,7 @@ pub fn global_alignment(
         "",
     );
 
-    (score, alignments, dp_table)
+    (score, alignments)
 }
 
 fn traceback_global(
@@ -220,7 +232,9 @@ pub fn local_alignment(
     map_fn: fn(char) -> usize,
     gap_penalty: i32,
     scoring_matrix: &Vec<Vec<i32>>,
-) -> (i32, Vec<(String, String)>, Vec<Vec<i32>>) {
+) -> (i32, Vec<(String, String)>) {
+    println!("--- Local Alignment ---");
+
     let seq1_len = seq1.len();
     let seq2_len = seq2.len();
     let mut dp_table = vec![vec![0; seq2_len + 1]; seq1_len + 1];
@@ -235,24 +249,23 @@ pub fn local_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = diagonal.max(up).max(left).max(0);
-
-            if dp_table[i][j] != 0 {
-                let selected_name = if dp_table[i][j] == diagonal {
-                    "diagonal"
-                } else if dp_table[i][j] == up {
-                    "up"
-                } else {
-                    "left"
-                };
-
-                println!("({}, {}) is {}", i + 1, j + 1, selected_name);
-            }
+            dp_table[i][j] = if diagonal >= up && diagonal >= left {
+                print!("↖");
+                diagonal
+            } else if up >= diagonal && up >= left {
+                print!("↑");
+                up
+            } else {
+                print!("←");
+                left
+            };
+            print!("{:>2} ", dp_table[i][j]);
 
             if dp_table[i][j] > max_value {
                 max_value = dp_table[i][j];
             }
         }
+        println!();
     }
 
     let mut alignments = vec![];
@@ -275,7 +288,7 @@ pub fn local_alignment(
         }
     }
 
-    (max_value, alignments, dp_table)
+    (max_value, alignments)
 }
 
 fn traceback_local(

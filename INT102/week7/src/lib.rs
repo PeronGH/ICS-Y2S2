@@ -2,13 +2,14 @@ use petgraph::graph::{Graph, NodeIndex};
 use petgraph::visit::EdgeRef;
 use petgraph::EdgeType;
 use std::f64;
+use std::fmt::Display;
 
 // Function to compute the shortest path from the source node to all other nodes in the graph.
 // It returns an Option<Vec<f64>> containing the shortest path distances.
 // If a negative cycle is detected, it returns None.
 pub fn bellman_ford<N, E>(graph: &Graph<N, f64, E>, source: NodeIndex) -> Option<Vec<f64>>
 where
-    N: Clone,
+    N: Clone + Display,
     E: EdgeType,
 {
     // Get the number of vertices in the graph.
@@ -20,18 +21,41 @@ where
     // Set the distance to the source node as 0.
     distances[source.index()] = 0.0;
 
+    // Initialize the previous node record
+    let mut prev = vec![None; num_vertices];
+
     // Relax all edges (num_vertices - 1) times, to guarantee that the shortest paths are found.
-    for _ in 0..num_vertices - 1 {
+    for i in 0..num_vertices - 1 {
+        println!("Iteration {}:", i + 1);
         // Iterate through all edges in the graph.
         for edge in graph.edge_references() {
             // Get the source, target nodes (u, v), and the weight of the edge.
             let (u, v, weight) = (edge.source(), edge.target(), *edge.weight());
 
             // If the current distance to the target node (v) can be improved by going through the source node (u),
-            // update the distance.
+            // update the distance and the previous node record.
             if distances[u.index()] + weight < distances[v.index()] {
                 distances[v.index()] = distances[u.index()] + weight;
+                prev[v.index()] = Some(u);
+
+                // Print the updated table
+                println!("Vertex | Distance | Previous Node");
+                for i in 0..num_vertices {
+                    let vertex_name = graph.node_weight(NodeIndex::new(i)).unwrap();
+                    let distance = distances[i];
+                    let prev_node = prev[i].map_or("None".to_string(), |node| {
+                        format!("{}", graph.node_weight(node).unwrap())
+                    });
+                    println!("{:<6} | {:<8} | {}", vertex_name, distance, prev_node);
+                }
+            } else {
+                println!(
+                    "No update for edge ({}, {})",
+                    graph.node_weight(u).unwrap(),
+                    graph.node_weight(v).unwrap()
+                )
             }
+            println!();
         }
     }
 
@@ -166,6 +190,8 @@ pub mod horspool {
         // Step 4: Iterate through the text, comparing with the pattern
         while skip <= n - m {
             cmp_count += 1;
+
+            println!("{}\n{}", text, " ".repeat(skip) + pattern);
 
             // Step 4.1: Check if the pattern starts at the current position in the text
             if text
