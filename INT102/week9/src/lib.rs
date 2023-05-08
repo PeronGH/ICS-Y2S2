@@ -46,7 +46,7 @@ fn tsp_helper<N: Clone + Debug>(
                 .map(|i| graph.node_weight(*i).unwrap())
                 .collect::<Vec<_>>()
         );
-        println!("Cost: {:?}\n", total_cost);
+        println!("Cost: {:?}", total_cost);
 
         if total_cost < *best_cost {
             *best_cost = total_cost;
