@@ -259,7 +259,12 @@ pub fn local_alignment(
                 print!("←");
                 left
             };
-            print!("{:>2} ", dp_table[i][j]);
+
+            if dp_table[i][j] < 0 {
+                dp_table[i][j] = 0;
+            }
+
+            print!("{} ", dp_table[i][j]);
 
             if dp_table[i][j] > max_value {
                 max_value = dp_table[i][j];
