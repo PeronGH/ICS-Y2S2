@@ -64,7 +64,15 @@ fn tsp_helper<N: Clone + Debug>(
                         .map(|i| graph.node_weight(*i).unwrap())
                         .collect::<Vec<_>>()
                 );
-                println!("Cost: {:?}", new_cost);
+
+                println!(
+                    "Cost: {:?}",
+                    if new_path.len() == graph.node_count() {
+                        new_cost + graph[graph.find_edge(neighbor, path[0]).unwrap()]
+                    } else {
+                        new_cost
+                    }
+                );
 
                 tsp_helper(graph, neighbor, new_path, new_cost, best_tour, best_cost);
             }
