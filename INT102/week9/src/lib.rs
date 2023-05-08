@@ -38,6 +38,16 @@ fn tsp_helper<N: Clone + Debug>(
     if path.len() == graph.node_count() {
         let last_edge = graph.find_edge(current, path[0]).unwrap();
         let total_cost = cost + graph[last_edge];
+
+        println!(
+            "\nPath: {:?}",
+            path.iter()
+                .chain([path[0]].iter())
+                .map(|i| graph.node_weight(*i).unwrap())
+                .collect::<Vec<_>>()
+        );
+        println!("Cost: {:?}\n", total_cost);
+
         if total_cost < *best_cost {
             *best_cost = total_cost;
             *best_tour = path.clone();
@@ -64,15 +74,7 @@ fn tsp_helper<N: Clone + Debug>(
                         .map(|i| graph.node_weight(*i).unwrap())
                         .collect::<Vec<_>>()
                 );
-
-                println!(
-                    "Cost: {:?}",
-                    if new_path.len() == graph.node_count() {
-                        new_cost + graph[graph.find_edge(neighbor, path[0]).unwrap()]
-                    } else {
-                        new_cost
-                    }
-                );
+                println!("Cost: {:?}", new_cost);
 
                 tsp_helper(graph, neighbor, new_path, new_cost, best_tour, best_cost);
             }
