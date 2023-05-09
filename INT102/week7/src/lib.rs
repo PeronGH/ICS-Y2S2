@@ -39,14 +39,19 @@ where
                 prev[v.index()] = Some(u);
 
                 // Print the updated table
-                println!("Vertex | Distance | Previous Node");
+                println!(
+                    "| Vertex | Distance | Previous Node |\n| ------ | -------- | ------------- |"
+                );
                 for i in 0..num_vertices {
                     let vertex_name = graph.node_weight(NodeIndex::new(i)).unwrap();
                     let distance = distances[i];
                     let prev_node = prev[i].map_or("None".to_string(), |node| {
                         format!("{}", graph.node_weight(node).unwrap())
                     });
-                    println!("{:<6} | {:<8} | {}", vertex_name, distance, prev_node);
+                    println!(
+                        "| {:<6} | {:<8} | {:<13} |",
+                        vertex_name, distance, prev_node
+                    );
                 }
             } else {
                 println!(

@@ -6,8 +6,25 @@ pub fn lcs_tab(str1: &str, str2: &str) -> usize {
     // Create a 2D table to store the lengths of LCS for all subproblems
     let mut dp = vec![vec![0; n + 1]; m + 1];
 
+    // Print characters in the second string
+    print!("       |");
+    for c in str2.chars() {
+        print!("  {}|", c);
+    }
+    println!();
+
+    // Print the first row of the DP table
+    print!("   |");
+    for _ in 0..=n {
+        print!("  0|");
+    }
+    println!();
+
     // Iterate through the strings, updating the DP table
     for i in 1..=m {
+        // Print the current character in the first string
+        print!("|{} |  0|", str1.chars().nth(i - 1).unwrap());
+
         for j in 1..=n {
             // If the characters at the current positions match,
             // the LCS length is one greater than the length of the LCS
@@ -15,21 +32,27 @@ pub fn lcs_tab(str1: &str, str2: &str) -> usize {
             // (indicated by the ↖ arrow)
             if str1.chars().nth(i - 1) == str2.chars().nth(j - 1) {
                 dp[i][j] = 1 + dp[i - 1][j - 1];
-                print!("↖")
+                print!("↖ ")
             } else {
                 // If the characters at the current positions do not match,
                 // the LCS length is the maximum of the lengths of the LCS
                 // for the previous character in the first string (indicated by the ↑ arrow)
                 // and the previous character in the second string (indicated by the ← arrow)
-                dp[i][j] = if dp[i - 1][j] > dp[i][j - 1] {
-                    print!("↑");
-                    dp[i - 1][j]
+                dp[i][j] = dp[i - 1][j].max(dp[i][j - 1]);
+                if dp[i][j] == dp[i - 1][j] {
+                    print!("↑")
                 } else {
-                    print!("←");
-                    dp[i][j - 1]
-                };
+                    print!(" ")
+                }
+
+                if dp[i][j] == dp[i][j - 1] {
+                    print!("←")
+                } else {
+                    print!(" ")
+                }
             }
-            print!("{} ", dp[i][j])
+
+            print!("{}|", dp[i][j])
         }
         println!();
     }
