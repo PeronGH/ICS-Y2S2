@@ -1,3 +1,5 @@
+use petgraph::algo::min_spanning_tree;
+use petgraph::data::Element;
 use petgraph::graph::{NodeIndex, UnGraph};
 use std::fmt::Debug;
 
@@ -9,6 +11,8 @@ pub fn travelling_salesman<N: Clone + Debug>(
     let current_cost = 0.0;
     let mut best_tour = Vec::new();
     let mut best_cost = f64::INFINITY;
+
+    println!("Initial Bound: {}\n", lower_bound(graph, &path));
 
     tsp_helper(
         graph,
@@ -23,21 +27,29 @@ pub fn travelling_salesman<N: Clone + Debug>(
 }
 
 fn lower_bound<N: Clone + Debug>(graph: &UnGraph<N, f64>, path: &Vec<NodeIndex>) -> f64 {
-    let mut lb = 0.0;
-    for node in graph.node_indices() {
-        if !path.contains(&node) {
-            let mut min_edges = graph
-                .edges(node)
-                .map(|edge| *edge.weight())
-                .collect::<Vec<f64>>();
-            min_edges.sort_by(|a, b| a.partial_cmp(b).unwrap());
-            if min_edges.len() >= 2 {
-                lb += (min_edges[0] + min_edges[1]) / 2.0;
-            } else if min_edges.len() == 1 {
-                lb += min_edges[0];
+    // Create a new graph that only includes the unvisited nodes
+    let unvisited_graph = graph.clone().filter_map(
+        |i, nw| {
+            if path.contains(&i) {
+                None
+            } else {
+                Some(nw.clone())
             }
-        }
-    }
+        },
+        |_, ew| Some(*ew),
+    );
+
+    // Calculate the minimum spanning tree of the unvisited nodes
+    let mst = min_spanning_tree(&unvisited_graph);
+
+    // The lower bound is the sum of the edge weights in the minimum spanning tree
+    let lb: f64 = mst
+        .filter_map(|element| match element {
+            Element::Edge { weight, .. } => Some(weight),
+            _ => None,
+        })
+        .sum();
+
     lb
 }
 
