@@ -128,23 +128,23 @@ pub fn global_alignment(
     }
 
     println!(
-        " |   |   {}|",
+        "       |     {}|",
         seq2.chars()
             .map(|c| String::from(c))
             .collect::<Vec<_>>()
-            .join("|   ")
+            .join("|     ")
     );
 
     // print row zero
     print!(" |");
     for n in &dp_table[0] {
-        print!("{:>3}| ", n);
+        print!("  {:>3}| ", n);
     }
     println!();
 
     for i in 1..=seq1_len {
         print!(
-            "{}|{:>3}|",
+            "{}|  {:>3}|",
             seq1.chars().nth(i - 1).unwrap(),
             dp_table[i][0]
         );
@@ -156,16 +156,24 @@ pub fn global_alignment(
             let up = dp_table[i - 1][j] + gap_penalty;
             let left = dp_table[i][j - 1] + gap_penalty;
 
-            dp_table[i][j] = if diagonal >= up && diagonal >= left {
-                print!("↖");
-                diagonal
-            } else if up >= diagonal && up >= left {
-                print!("↑");
-                up
+            dp_table[i][j] = diagonal.max(up).max(left);
+
+            if dp_table[i][j] == diagonal {
+                print!("↖")
             } else {
-                print!("←");
-                left
-            };
+                print!(" ")
+            }
+            if dp_table[i][j] == up {
+                print!("↑")
+            } else {
+                print!(" ")
+            }
+            if dp_table[i][j] == left {
+                print!("←")
+            } else {
+                print!(" ")
+            }
+
             print!("{:>3}|", dp_table[i][j]);
         }
         println!();
