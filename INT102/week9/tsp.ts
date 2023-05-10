@@ -2,25 +2,25 @@ interface TspState {
   adj: number[][];
   currBound: number;
   currWeight: number;
-  level: number;
   currPath: number[];
-  visited: boolean[];
 }
 
 function findMins(adj: number[][], i: number): [number, number] {
   const others = adj[i].filter((_, j) => j !== i);
   const sorted = others.sort((a, b) => a - b);
-  return [sorted[0], sorted[1]];
+  return [sorted[0], sorted[1] || Number.MAX_SAFE_INTEGER];
 }
 
 function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
-  let { adj, currBound, currWeight, level, currPath, visited } = state;
+  const { adj, currPath } = state;
+  let { currBound, currWeight } = state;
   let finalRes = Number.MAX_SAFE_INTEGER;
-  let finalPath = Array(currPath.length + 1).fill(-1);
+  let finalPath: number[] = [];
 
-  if (level === currPath.length) {
-    if (adj[currPath[level - 1]][currPath[0]] !== 0) {
-      const currRes = currWeight + adj[currPath[level - 1]][currPath[0]];
+  if (currPath.length === adj.length) {
+    if (adj[currPath[currPath.length - 1]][currPath[0]] !== 0) {
+      const currRes = currWeight +
+        adj[currPath[currPath.length - 1]][currPath[0]];
       if (currRes < finalRes) {
         finalPath = [...currPath, currPath[0]];
         finalRes = currRes;
@@ -30,37 +30,31 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
   }
 
   for (let i = 0; i < adj.length; i++) {
-    if (adj[currPath[level - 1]][i] !== 0 && !visited[i]) {
+    if (adj[currPath[currPath.length - 1]][i] !== 0 && !currPath.includes(i)) {
       const temp = currBound;
-      currWeight += adj[currPath[level - 1]][i];
+      currWeight += adj[currPath[currPath.length - 1]][i];
 
       const [firstMin] = findMins(adj, i);
-      if (level === 1) {
-        currBound -= (findMins(adj, currPath[level - 1])[0] + firstMin) / 2;
+      if (currPath.length === 1) {
+        currBound -=
+          (findMins(adj, currPath[currPath.length - 1])[0] + firstMin) / 2;
       } else {
-        currBound -= (findMins(adj, currPath[level - 1])[1] + firstMin) / 2;
+        currBound -=
+          (findMins(adj, currPath[currPath.length - 1])[1] + firstMin) / 2;
       }
 
       if (currBound + currWeight < finalRes) {
-        currPath[level] = i;
-        visited[i] = true;
-        const result = TSPRec({
-          adj,
-          currBound,
-          currWeight,
-          level: level + 1,
-          currPath,
-          visited,
-        });
+        currPath.push(i);
+        const result = TSPRec({ adj, currBound, currWeight, currPath });
         if (result.finalRes < finalRes) {
           finalRes = result.finalRes;
           finalPath = result.finalPath;
         }
+        currPath.pop();
       }
 
-      currWeight -= adj[currPath[level - 1]][i];
+      currWeight -= adj[currPath[currPath.length - 1]][i];
       currBound = temp;
-      visited = visited.map((_, j) => j <= level - 1);
     }
   }
 
@@ -68,20 +62,19 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
 }
 
 function TSP(adj: number[][]): { finalRes: number; finalPath: number[] } {
-  const currPath = Array(adj.length).fill(-1);
+  const currPath = [0];
   let currBound = 0;
-  const visited = Array(adj.length).fill(false);
 
   for (let i = 0; i < adj.length; i++) {
     const [firstMin, secondMin] = findMins(adj, i);
     currBound += firstMin + secondMin;
   }
 
-  currBound = currBound % 2 === 1 ? (currBound / 2) + 1 : currBound / 2;
-  visited[0] = true;
-  currPath[0] = 0;
+  currBound = currBound % 2 === 1
+    ? Math.floor(currBound / 2) + 1
+    : currBound / 2;
 
-  return TSPRec({ adj, currBound, currWeight: 0, level: 1, currPath, visited });
+  return TSPRec({ adj, currBound, currWeight: 0, currPath });
 }
 
 //Adjacency matrix for the given graph
