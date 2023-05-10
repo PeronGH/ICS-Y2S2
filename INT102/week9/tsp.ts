@@ -5,18 +5,35 @@ interface TspState {
   currPath: number[];
 }
 
+interface TSPResult {
+  finalRes: number;
+  finalPath: number[];
+}
+
 function findMins(adj: number[][], i: number): [number, number] {
   const others = adj[i].filter((_, j) => j !== i);
   const sorted = others.sort((a, b) => a - b);
   return [sorted[0], sorted[1] || Number.MAX_SAFE_INTEGER];
 }
 
-function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
+/**
+ * Recursive function to find the shortest path
+ * using depth-first search and branch-and-bound.
+ *
+ * @param state - An object that stores the current state of the search, including
+ * the adjacency matrix, current lower bound of the path's cost, current weight of
+ * the path, and the nodes visited in the current path.
+ * @returns An object containing the minimum cost of the path and the final path.
+ */
+function TSPRec(state: TspState): TSPResult {
   const { adj, currPath } = state;
   let { currBound, currWeight } = state;
   let finalRes = Number.MAX_SAFE_INTEGER;
   let finalPath: number[] = [];
 
+  // If all nodes have been visited, check if there is an edge from the last node in
+  // the path back to the first node (to form a cycle). If so, compare the total weight
+  // of this path with the current minimum, and update the minimum if necessary.
   if (currPath.length === adj.length) {
     if (adj[currPath[currPath.length - 1]][currPath[0]] !== 0) {
       const currRes = currWeight +
@@ -29,11 +46,16 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
     return { finalRes, finalPath };
   }
 
+  // If not all nodes have been visited, try to add each unvisited node to the path.
   for (let i = 0; i < adj.length; i++) {
+    // Check if there is an edge from the current node to node i and that node i has not been visited.
     if (adj[currPath[currPath.length - 1]][i] !== 0 && !currPath.includes(i)) {
+      // Remember the current lower bound to restore later.
       const temp = currBound;
+      // Add the weight of the edge to node i to the current weight.
       currWeight += adj[currPath[currPath.length - 1]][i];
 
+      // Recalculate the lower bound of the path's cost.
       const [firstMin] = findMins(adj, i);
       if (currPath.length === 1) {
         currBound -=
@@ -43,6 +65,9 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
           (findMins(adj, currPath[currPath.length - 1])[1] + firstMin) / 2;
       }
 
+      // If the current lower bound plus the current weight of the path is less than
+      // the current minimum, add node i to the path and recurse. If the result is better
+      // than the current minimum, update the minimum.
       if (currBound + currWeight < finalRes) {
         currPath.push(i);
         const result = TSPRec({ adj, currBound, currWeight, currPath });
@@ -53,6 +78,7 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
         currPath.pop();
       }
 
+      // Restore the weight and the lower bound for the next iteration.
       currWeight -= adj[currPath[currPath.length - 1]][i];
       currBound = temp;
     }
@@ -61,7 +87,7 @@ function TSPRec(state: TspState): { finalRes: number; finalPath: number[] } {
   return { finalRes, finalPath };
 }
 
-function TSP(adj: number[][]): { finalRes: number; finalPath: number[] } {
+export function TSP(adj: number[][]): TSPResult {
   const currPath = [0];
   let currBound = 0;
 
