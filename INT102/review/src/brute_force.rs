@@ -48,7 +48,3 @@ pub fn insertion_sort<T: Ord>(arr: &mut [T]) {
         }
     }
 }
-
-pub fn linear_search<T: PartialEq>(arr: &[T], target: &T) -> Option<usize> {
-    arr.iter().position(|e| e == target)
-}
