@@ -83,3 +83,25 @@ fn selection_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
     arr
 }
 ```
+
+#### Bubble Sort
+
+- **Input**: an unsorted list of comparable elements.
+- **Output**: the same list sorted in the desired order (ascending here).
+- **Time complexity**: $O(n^2)$
+- **Implementation**: repeatedly swaps adjacent elements if they are in the wrong order.
+
+[Here](./review/src/brute_force.rs) is the code:
+
+```rust
+fn bubble_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
+    for _ in 0..arr.len() {
+        for i in 1..arr.len() {
+            if arr[i - 1] > arr[i] {
+                arr.swap(i - 1, i);
+            }
+        }
+    }
+    arr
+}
+```

@@ -6,4 +6,8 @@ fn main() {
     let arr_for_selection_sort = &mut unsorted_arr.clone();
     brute_force::selection_sort(arr_for_selection_sort);
     println!("After Selection Sort: {:?}", arr_for_selection_sort);
+
+    let arr_for_bubble_sort = &mut unsorted_arr.clone();
+    brute_force::bubble_sort(arr_for_bubble_sort);
+    println!("After Selection Sort: {:?}", arr_for_bubble_sort);
 }
