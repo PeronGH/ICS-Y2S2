@@ -9,6 +9,7 @@
         "curr",
         "heapify",
         "horspool",
+        "Linearithmic",
         "matplotlib",
         "networkx",
         "petgraph",

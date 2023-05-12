@@ -120,11 +120,7 @@ pub fn tsp_helper(adj: Vec<Vec<usize>>, start_node: usize) -> TspResult {
         curr_bound += first_min + second_min;
     }
 
-    curr_bound = if curr_bound % 2 == 1 {
-        curr_bound / 2 + 1
-    } else {
-        curr_bound / 2
-    };
+    curr_bound = curr_bound / 2 + curr_bound % 2;
 
     let state = TspState {
         adj,
