@@ -74,13 +74,12 @@ Whether P = NP or not is one of the most important open questions in theoretical
 [Here](./review/src/brute_force.rs) is the code:
 
 ```rust
-fn selection_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
+fn selection_sort<T: Ord>(arr: &mut [T]) {
     for i in 0..arr.len() {
-        if let Some((min_i, _)) = arr.iter().enumerate().skip(i).min_by_key(|(_, v)| *v) {
+        if let Some((min_i, _)) = arr.iter().enumerate().skip(i).min_by_key(|(_, e)| *e) {
             arr.swap(i, min_i)
         }
     }
-    arr
 }
 ```
 
@@ -94,7 +93,7 @@ fn selection_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
 [Here](./review/src/brute_force.rs) is the code:
 
 ```rust
-fn bubble_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
+fn bubble_sort<T: Ord>(arr: &mut [T]) {
     for i in 0..arr.len() {
         for j in 1..arr.len() - i {
             if arr[j - 1] > arr[j] {
@@ -102,7 +101,6 @@ fn bubble_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
             }
         }
     }
-    arr
 }
 ```
 
@@ -116,7 +114,7 @@ fn bubble_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
 [Here](./review/src/brute_force.rs) is the code:
 
 ```rust
-fn insertion_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
+fn insertion_sort<T: Ord>(arr: &mut [T]) {
     for i in 1..arr.len() {
         let mut j = i;
         while j > 0 && arr[j - 1] > arr[j] {
@@ -124,6 +122,5 @@ fn insertion_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
             j -= 1;
         }
     }
-    arr
 }
 ```
