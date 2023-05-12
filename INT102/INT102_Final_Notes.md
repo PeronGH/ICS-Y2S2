@@ -57,3 +57,5 @@ If we can reduce problem A to problem B in polynomial time, it means that proble
 #### P vs NP Problem
 
 Whether P = NP or not is one of the most important open questions in theoretical computer science.
+
+![Euler diagram for P, NP, NP-complete, and NP-hard set of problems (excluding the empty language and its complement, which belong to P but are not NP-complete)](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/P_np_np-complete_np-hard.svg/2880px-P_np_np-complete_np-hard.svg.png)
