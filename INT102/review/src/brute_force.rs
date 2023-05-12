@@ -8,11 +8,22 @@ pub fn selection_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
 }
 
 pub fn bubble_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
-    for _ in 0..arr.len() {
-        for i in 1..arr.len() {
-            if arr[i - 1] > arr[i] {
-                arr.swap(i - 1, i);
+    for i in 0..arr.len() {
+        for j in 1..arr.len() - i {
+            if arr[j - 1] > arr[j] {
+                arr.swap(j - 1, j);
             }
+        }
+    }
+    arr
+}
+
+pub fn insertion_sort<T: Ord>(arr: &mut [T]) -> &mut [T] {
+    for i in 1..arr.len() {
+        let mut j = i;
+        while j > 0 && arr[j - 1] > arr[j] {
+            arr.swap(j - 1, j);
+            j -= 1;
         }
     }
     arr

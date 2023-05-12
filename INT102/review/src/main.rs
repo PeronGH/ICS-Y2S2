@@ -9,5 +9,9 @@ fn main() {
 
     let arr_for_bubble_sort = &mut unsorted_arr.clone();
     brute_force::bubble_sort(arr_for_bubble_sort);
-    println!("After Selection Sort: {:?}", arr_for_bubble_sort);
+    println!("After Bubble Sort: {:?}", arr_for_bubble_sort);
+
+    let arr_for_insertion_sort = &mut unsorted_arr.clone();
+    brute_force::insertion_sort(arr_for_insertion_sort);
+    println!("After Insertion Sort: {:?}", arr_for_insertion_sort);
 }
