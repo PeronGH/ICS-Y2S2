@@ -19,8 +19,7 @@ fn main() {
         (nodes[2], nodes[3], 30.0),
     ]);
 
-    let (best_tour, best_cost) = travelling_salesman(&graph, nodes[0]);
+    let result = travelling_salesman(&graph, nodes[0]);
 
-    println!("Best tour: {:?}", best_tour);
-    println!("Best cost: {:?}", best_cost);
+    println!("Result: {:?}", result);
 }
