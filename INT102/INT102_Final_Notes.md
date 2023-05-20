@@ -677,19 +677,18 @@ At the end, $R[i][j]$ will be true if there is a path from node $i$ to node $j$ 
 
 - **Output**: The minimum time required to go through the assembly process.
 
-- **Time complexity**: $O(n)$, where $n$ is the number of stations.
+- **Time complexity**: $O(mn)$ if there are "m" assembly lines with "n" stations each.
 
 - **Implementation**:
-
-  1. Initialize two sequences `f = (f1, f2)` to store the fastest times to reach each station in the respective lines.
-
-  2. Set the initial values of `f1` and `f2` as `e1 + a1[0]` and `e2 + a2[0]`, respectively.
-
-  3. For each subsequent station `i` from `1` to `n-1`:
+1. Initialize two sequences `f = (f1, f2)` to store the fastest times to reach each station in the respective lines.
+  
+2. Set the initial values of `f1` and `f2` as `e1 + a1[0]` and `e2 + a2[0]`, respectively.
+  
+3. For each subsequent station `i` from `1` to `n-1`:
      - Compute `f1[i]` as the minimum between `f1[i-1] + a1[i]` and `f2[i-1] + t2[i-1] + a1[i]`.
      - Compute `f2[i]` as the minimum between `f2[i-1] + a2[i]` and `f1[i-1] + t1[i-1] + a2[i]`.
-
-  4. The minimum total time through the assembly line is the minimum between `f1[n-1] + x1` and `f2[n-1] + x2`.
+  
+4. The minimum total time through the assembly line is the minimum between `f1[n-1] + x1` and `f2[n-1] + x2`.
 
 [Here](./review/src/dynamic_programming.rs) is the code:
 
