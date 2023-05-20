@@ -627,3 +627,25 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
   3. Repeat the above step until all nodes have been considered as intermediate nodes.
 
 At the end, $D[i][j]$ will contain the shortest distance from node $i$ to node $j$ in graph $G$. Note that Floyd's algorithm works for both positive and negative edge weights, but cannot handle negative cycles.
+
+[Here](./review/src/dynamic_programming.rs) is the code:
+
+```rust
+fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
+    let n = adj_matrix.len();
+    let mut dist = adj_matrix.clone();
+
+    for k in 0..n {
+        for i in 0..n {
+            for j in 0..n {
+                if dist[i][k] != i64::MAX && dist[k][j] != i64::MAX {
+                    dist[i][j] = dist[i][j].min(dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+    }
+
+    dist
+}
+```
+
