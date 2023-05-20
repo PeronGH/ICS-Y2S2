@@ -1,3 +1,7 @@
+use std::collections::{HashSet, VecDeque};
+
+use petgraph::prelude::*;
+
 pub trait BruteForceSorting<T: Ord> {
     fn selection_sort(&mut self) -> &mut [T];
     fn bubble_sort(&mut self) -> &mut [T];
@@ -54,4 +58,39 @@ pub fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize
         .windows(needle.len())
         .enumerate()
         .find_map(|(i, current)| if current == needle { Some(i) } else { None })
+}
+
+pub fn bfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
+    let mut deque = VecDeque::from([start]);
+    let mut visited = HashSet::from([start]);
+    print!("{:?} ", start);
+
+    while let Some(node) = deque.pop_front() {
+        for neighbor in graph.neighbors(node) {
+            if !visited.contains(&neighbor) {
+                visited.insert(neighbor);
+                print!("{:?} ", neighbor);
+                deque.push_back(neighbor);
+            }
+        }
+    }
+
+    println!();
+    visited
+}
+
+pub fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
+    let mut stack = vec![start];
+    let mut visited = HashSet::new();
+
+    while let Some(node) = stack.pop() {
+        if !visited.contains(&node) {
+            visited.insert(node);
+            print!("{:?} ", node);
+            stack.extend(graph.neighbors(node));
+        }
+    }
+
+    println!();
+    visited
 }

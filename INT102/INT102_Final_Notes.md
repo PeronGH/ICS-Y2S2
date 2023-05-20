@@ -144,3 +144,57 @@ fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize> {
         .find_map(|(i, current)| if current == needle { Some(i) } else { None })
 }
 ```
+
+### Brute-Force Graph
+
+#### Breadth-First Search
+
+- **Input**: a graph (or tree) and a start node.
+- **Output**: a set of all nodes reachable from the start node.
+- **Time complexity**: $O(V + E)$, where $V$ is the number of vertices and $E$ is the number of edges.
+- **Implementation**: explores the graph level by level, starting from the given node.
+
+[Here](./review/src/brute_force.rs) is the code:
+
+```rust
+fn bfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
+    let mut deque = VecDeque::from([start]);
+    let mut visited = HashSet::from([start]);
+
+    while let Some(node) = deque.pop_front() {
+        for neighbor in graph.neighbors(node) {
+            if !visited.contains(&neighbor) {
+                visited.insert(neighbor);
+                deque.push_back(neighbor);
+            }
+        }
+    }
+
+    visited
+}
+```
+
+#### Depth-First Search
+
+- **Input**: a graph (or tree) and a start node.
+- **Output**: a set of all nodes reachable from the start node.
+- **Time complexity**: $O(V + E)$, where $V$ is the number of vertices and $E$ is the number of edges.
+- **Implementation**: explores as far as possible along each branch before backtracking.
+
+[Here](https://chat.openai.com/c/review/src/brute_force.rs) is the code:
+
+```rust
+fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
+    let mut stack = vec![start];
+    let mut visited = HashSet::new();
+
+    while let Some(node) = stack.pop() {
+        if !visited.contains(&node) {
+            visited.insert(node);
+            stack.extend(graph.neighbors(node));
+        }
+    }
+
+    visited
+}
+```
