@@ -244,7 +244,7 @@ fn merge<T: Ord + Clone>(arr1: &[T], arr2: &[T]) -> Vec<T> {
 }
 ```
 
-### Divide-and-Conquer String
+### Divide-and-Conquer Searching
 
 #### Binary Search
 
