@@ -193,7 +193,6 @@ fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex, visited: &mut HashSet<NodeIn
         }
     }
 }
-
 ```
 
 ## Divide and Conquer
@@ -265,3 +264,83 @@ fn binary_search<T: Ord>(arr: &[T], target: &T) -> bool {
     }
 }
 ```
+
+## Dynamic Programming
+
+### Dynamic Programming String
+
+#### Longest Common Subsequence
+
+- **Input**: two strings $X$ and $Y$.
+- **Output**: the longest common subsequence (LCS) of $X$ and $Y$.
+- **Time complexity**: $O(mn)$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively.
+- **Implementation**: For two strings $X$ and $Y$,
+  
+  1. Create a 2D DP table of size $m \times n$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively.
+  2. Fill the  DP table using:
+
+  $$
+  \begin{align*}
+  dp[i][j] =
+  \begin{cases}
+  dp[i-1][j-1] + 1 & \text{if } X[i-1] = Y[j-1] \\
+  \max(dp[i-1][j], dp[i][j-1]) & \text{otherwise}
+  \end{cases}
+  \end{align*}
+  $$
+
+  3. Backtrack the DP table to find the LCS using:
+
+  $$
+  \begin{align*}
+  \text{{backtrack}}(dp, X, Y, i, j) =
+  \begin{cases}
+  \text{{empty string}} & \text{if } i = 0 \text{ or } j = 0,\\
+  \text{{backtrack}}(dp, X, Y, i-1, j-1) + X[i-1] & \text{if } X[i-1] = Y[j-1], \\
+  \text{{backtrack}}(dp, X, Y, i-1, j) & \text{if } X[i-1] \neq Y[j-1] \text{ and } dp[i-1][j] \geq dp[i][j-1],\\
+  \text{{backtrack}}(dp, X, Y, i, j-1) & \text{if } X[i-1] \neq Y[j-1] \text{ and } dp[i][j-1] > dp[i-1][j].
+  \end{cases}
+  \end{align*}
+  $$
+
+[Here](./review/src/dynamic_programming.rs) is the code:
+
+```rust
+fn lcs(str1: &str, str2: &str) -> String {
+    let m = str1.len();
+    let n = str2.len();
+
+    let mut dp = vec![vec![0; n + 1]; m + 1];
+
+    for i in 1..=m {
+        for j in 1..=n {
+            if str1.chars().nth(i - 1) == str2.chars().nth(j - 1) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = dp[i - 1][j].max(dp[i][j - 1]);
+            }
+        }
+    }
+
+    backtrack_lcs(&dp, str1, str2, m, n)
+}
+
+fn backtrack_lcs(dp: &Vec<Vec<usize>>, str1: &str, str2: &str, i: usize, j: usize) -> String {
+    if i == 0 || j == 0 {
+        String::new()
+    } else if str1.chars().nth(i - 1) == str2.chars().nth(j - 1) {
+        format!(
+            "{}{}",
+            backtrack_lcs(dp, str1, str2, i - 1, j - 1),
+            str1.chars().nth(i - 1).unwrap()
+        )
+    } else {
+        if dp[i - 1][j] > dp[i][j - 1] {
+            backtrack_lcs(dp, str1, str2, i - 1, j)
+        } else {
+            backtrack_lcs(dp, str1, str2, i, j - 1)
+        }
+    }
+}
+```
+

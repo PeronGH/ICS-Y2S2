@@ -1,5 +1,6 @@
 mod brute_force;
 mod divide_and_conquer;
+mod dynamic_programming;
 use brute_force::BruteForceSorting;
 use petgraph::Graph;
 use std::collections::HashSet;
@@ -66,4 +67,14 @@ fn main() {
         "Binary Search for 11: {:?}",
         divide_and_conquer::binary_search(&sorted_arr, &11)
     );
+
+    // Dynamic Programming
+
+    let str1 = "APPLE";
+    let str2 = "PP";
+
+    println!(
+        "Longest Common Subsequence: {}",
+        dynamic_programming::lcs(str1, str2)
+    )
 }
