@@ -18,4 +18,12 @@ fn main() {
         "After Insertion Sort: {:?}",
         unsorted_arr.clone().insertion_sort()
     );
+
+    let haystack = b"Hello, world!";
+    let needle = b"world";
+
+    println!(
+        "Linear Search: {:?}",
+        brute_force::linear_search(haystack, needle)
+    )
 }

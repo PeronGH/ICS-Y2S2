@@ -29,7 +29,7 @@ fn selection_sort<T: Ord>(arr: &mut [T]) {
     }
 }
 
-fn bubble_sort<T: Ord>(arr: &mut [T]) {
+fn bubble_sort<T: PartialOrd>(arr: &mut [T]) {
     for i in 0..arr.len() {
         for j in 1..arr.len() - i {
             if arr[j - 1] > arr[j] {
@@ -39,7 +39,7 @@ fn bubble_sort<T: Ord>(arr: &mut [T]) {
     }
 }
 
-fn insertion_sort<T: Ord>(arr: &mut [T]) {
+fn insertion_sort<T: PartialOrd>(arr: &mut [T]) {
     for i in 1..arr.len() {
         let mut j = i;
         while j > 0 && arr[j - 1] > arr[j] {
@@ -47,4 +47,11 @@ fn insertion_sort<T: Ord>(arr: &mut [T]) {
             j -= 1;
         }
     }
+}
+
+pub fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize> {
+    haystack
+        .windows(needle.len())
+        .enumerate()
+        .find_map(|(i, current)| if current == needle { Some(i) } else { None })
 }

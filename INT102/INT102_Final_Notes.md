@@ -124,3 +124,23 @@ fn insertion_sort<T: Ord>(arr: &mut [T]) {
     }
 }
 ```
+
+### Brute-Force String
+
+#### Linear Search
+
+- **Input**: a list of comparable elements and a target list.
+- **Output**: the index of the first occurrence of the target list in the list of elements, or None if not found.
+- **Time complexity**: $O(nm)$, where $n$ is the length of the list of elements and $m$ is the length of the target list.
+- **Implementation**: repeatedly compares the target list with a sublist of the list of elements.
+
+[Here](./review/src/brute_force.rs) is the code:
+
+```rust
+fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize> {
+    haystack
+        .windows(needle.len())
+        .enumerate()
+        .find_map(|(i, current)| if current == needle { Some(i) } else { None })
+}
+```
