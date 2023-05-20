@@ -195,3 +195,23 @@ pub fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
 
     dist
 }
+
+pub fn assembly_line_scheduling(
+    a: (&[u64], &[u64]),
+    t: (&[u64], &[u64]),
+    e: (u64, u64),
+    x: (u64, u64),
+) -> u64 {
+    let n = a.0.len();
+    let mut f = (vec![0; n], vec![0; n]);
+
+    f.0[0] = e.0 + a.0[0];
+    f.1[0] = e.1 + a.1[0];
+
+    for i in 1..n {
+        f.0[i] = (f.0[i - 1] + a.0[i]).min(f.1[i - 1] + t.1[i - 1] + a.0[i]);
+        f.1[i] = (f.1[i - 1] + a.1[i]).min(f.0[i - 1] + t.0[i - 1] + a.1[i]);
+    }
+
+    (f.0[n - 1] + x.0).min(f.1[n - 1] + x.1)
+}

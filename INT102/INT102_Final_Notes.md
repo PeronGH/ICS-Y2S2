@@ -615,15 +615,13 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
   2. For each node $k$, consider each pair of nodes $i$ and $j$ and check if going from $i$ to $j$ through the node $k$ improves the current shortest path from $i$ to $j$. If it does, update the cell $D[i][j]$ with the new shorter distance. This can be formalized as:
 
   $$
-  \begin{align*}
-  D[i][j] =
+  D[i][j] = \min 
   \begin{cases}
-  D[i][j] & \text{if } D[i][j] \leq D[i][k] + D[k][j], \\
-  D[i][k] + D[k][j] & \text{otherwise}
+  D[i][j], \\
+  D[i][k] + D[k][j]
   \end{cases}
-  \end{align*}
   $$
-
+  
   3. Repeat the above step until all nodes have been considered as intermediate nodes.
 
 At the end, $D[i][j]$ will contain the shortest distance from node $i$ to node $j$ in graph $G$. Note that Floyd's algorithm works for both positive and negative edge weights, but cannot handle negative cycles.
@@ -646,6 +644,74 @@ fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
     }
 
     dist
+}
+```
+
+#### Warshall's Algorithm
+
+- **Input**: A directed graph $G$ with $n$ vertices, represented by an adjacency matrix.
+
+- **Output**: A matrix $R$ where each cell $R[i][j]$ is true if there is a path from vertex $i$ to vertex $j$ in graph $G$, and false otherwise.
+
+- **Time complexity**: $O(n^3)$, where $n$ is the number of vertices in the graph.
+
+- **Implementation**:
+
+  1. Create a 2D matrix $R$ such that $R[i][j]$ is true if there is a direct edge from node $i$ to node $j$ in the graph (or false if there is no direct edge).
+
+  2. For each node $k$, consider each pair of nodes $i$ and $j$. If there is a path from $i$ to $k$ and a path from $k$ to $j$ (i.e., if $R[i][k]$ and $R[k][j]$ are both true), then there is a path from $i$ to $j$. So, set $R[i][j]$ to true. This can be formalized as:
+
+  $$
+  \begin{align*}
+  R[i][j] = R[i][j] \lor (R[i][k] \land R[k][j])
+  \end{align*}
+  $$
+  
+  3. Repeat the above step until all nodes have been considered as intermediate nodes.
+
+At the end, $R[i][j]$ will be true if there is a path from node $i$ to node $j$ in graph $G$, and false otherwise. Note that Warshall's Algorithm is a variant of Floyd's Algorithm and is used to find the transitive closure of a directed graph.
+
+#### Assembly Line Scheduling Algorithm
+
+- **Input**: Two tuples of sequences representing the processing times at each station `a = (a1, a2)` and the transfer times `t = (t1, t2)`. Two tuples of values `e = (e1, e2)` and `x = (x1, x2)` represent entry and exit times for each line, respectively.
+
+- **Output**: The minimum time required to go through the assembly process.
+
+- **Time complexity**: $O(n)$, where $n$ is the number of stations.
+
+- **Implementation**:
+
+  1. Initialize two sequences `f = (f1, f2)` to store the fastest times to reach each station in the respective lines.
+
+  2. Set the initial values of `f1` and `f2` as `e1 + a1[0]` and `e2 + a2[0]`, respectively.
+
+  3. For each subsequent station `i` from `1` to `n-1`:
+     - Compute `f1[i]` as the minimum between `f1[i-1] + a1[i]` and `f2[i-1] + t2[i-1] + a1[i]`.
+     - Compute `f2[i]` as the minimum between `f2[i-1] + a2[i]` and `f1[i-1] + t1[i-1] + a2[i]`.
+
+  4. The minimum total time through the assembly line is the minimum between `f1[n-1] + x1` and `f2[n-1] + x2`.
+
+[Here](./review/src/dynamic_programming.rs) is the code:
+
+```rust
+pub fn assembly_line_scheduling(
+    a: (&[u64], &[u64]),
+    t: (&[u64], &[u64]),
+    e: (u64, u64),
+    x: (u64, u64),
+) -> u64 {
+    let n = a.0.len();
+    let mut f = (vec![0; n], vec![0; n]);
+
+    f.0[0] = e.0 + a.0[0];
+    f.1[0] = e.1 + a.1[0];
+
+    for i in 1..n {
+        f.0[i] = (f.0[i - 1] + a.0[i]).min(f.1[i - 1] + t.1[i - 1] + a.0[i]);
+        f.1[i] = (f.1[i - 1] + a.1[i]).min(f.0[i - 1] + t.0[i - 1] + a.1[i]);
+    }
+
+    (f.0[n - 1] + x.0).min(f.1[n - 1] + x.1)
 }
 ```
 

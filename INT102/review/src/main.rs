@@ -104,6 +104,16 @@ fn main() {
     for row in &dynamic_programming::floyd_warshall(&adj_matrix) {
         println!("{:?}", row);
     }
+
+    let a = (&[7, 9, 3, 4, 8, 4][..], &[8, 5, 6, 4, 5, 7][..]);
+    let t = (&[2, 3, 1, 3, 4][..], &[2, 1, 2, 2, 1][..]);
+    let e = (2, 4);
+    let x = (3, 2);
+
+    println!(
+        "Minimum time by Assembly Line Scheduling Algorithm: {}",
+        dynamic_programming::assembly_line_scheduling(a, t, e, x)
+    );
 }
 
 fn score_fn(x: char, y: char) -> i64 {
