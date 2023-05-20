@@ -14,6 +14,7 @@
         "matplotlib",
         "networkx",
         "petgraph",
+        "subarray",
         "subproblems",
         "TCCTATTCTT",
         "todense",

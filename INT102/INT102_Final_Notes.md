@@ -137,7 +137,7 @@ fn insertion_sort<T: Ord>(arr: &mut [T]) {
 [Here](./review/src/brute_force.rs) is the code:
 
 ```rust
-fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize> {
+fn linear_search<T: Eq>(haystack: &[T], needle: &[T]) -> Option<usize> {
     haystack
         .windows(needle.len())
         .enumerate()
@@ -181,7 +181,7 @@ fn bfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
 - **Time complexity**: $O(V + E)$, where $V$ is the number of vertices and $E$ is the number of edges.
 - **Implementation**: explores as far as possible along each branch before backtracking.
 
-[Here](https://chat.openai.com/c/review/src/brute_force.rs) is the code:
+[Here](./review/src/brute_force.rs) is the code:
 
 ```rust
 fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
@@ -196,5 +196,75 @@ fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
     }
 
     visited
+}
+```
+
+## Divide and Conquer
+
+### Divide-and-Conquer Sorting
+
+#### Merge Sort
+
+- **Input**: an unsorted list of comparable elements.
+- **Output**: the same list sorted in the desired order (ascending here).
+- **Time complexity**: $O(n \log n)$
+- **Implementation**: repeatedly splits the list into two halves, sorts them, and merges them
+
+[Here](./review/src/divide_and_conquer.rs) is the code:
+
+```rust
+fn merge_sort<T: Ord + Clone>(arr: &[T]) -> Vec<T> {
+    match arr.len() {
+        0 | 1 => arr.to_vec(),
+        _ => {
+            let (left, right) = arr.split_at(arr.len() / 2);
+            merge(&merge_sort(left), &merge_sort(right))
+        }
+    }
+}
+
+fn merge<T: Ord + Clone>(arr1: &[T], arr2: &[T]) -> Vec<T> {
+    let mut merged = Vec::with_capacity(arr1.len() + arr2.len());
+    let (mut i, mut j) = (0, 0);
+
+    while i < arr1.len() && j < arr2.len() {
+        if arr1[i] <= arr2[j] {
+            merged.push(arr1[i].clone());
+            i += 1;
+        } else {
+            merged.push(arr2[j].clone());
+            j += 1;
+        }
+    }
+
+    merged.extend_from_slice(&arr1[i..]);
+    merged.extend_from_slice(&arr2[j..]);
+
+    merged
+}
+```
+
+### Divide-and-Conquer String
+
+#### Binary Search
+
+- **Input**: a sorted list of comparable elements and a target element.
+- **Output**: boolean indicating whether the target element is in the list.
+- **Time complexity**: $O(\log n)$, where $n$ is the length of the list.
+- **Implementation**: repeatedly divides the list in half until the target is found or the subarray size becomes 0.
+
+[Here](./review/src/divide_and_conquer.rs) is the code:
+
+```rust
+fn binary_search<T: Ord>(arr: &[T], target: &T) -> bool {
+    if arr.is_empty() {
+        return false;
+    }
+    let mid = arr.len() / 2;
+    match arr[mid].cmp(target) {
+        Equal => true,
+        Less => binary_search(&arr[mid + 1..], target),
+        Greater => binary_search(&arr[..mid], target),
+    }
 }
 ```

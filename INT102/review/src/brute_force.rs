@@ -53,7 +53,7 @@ fn insertion_sort<T: PartialOrd>(arr: &mut [T]) {
     }
 }
 
-pub fn linear_search<T: PartialEq>(haystack: &[T], needle: &[T]) -> Option<usize> {
+pub fn linear_search<T: Eq>(haystack: &[T], needle: &[T]) -> Option<usize> {
     haystack
         .windows(needle.len())
         .enumerate()

@@ -1,9 +1,12 @@
 mod brute_force;
+mod divide_and_conquer;
 use brute_force::BruteForceSorting;
 use petgraph::Graph;
 
 fn main() {
     let unsorted_arr = [7, 5, 3, 2, 6, 8, 9, 4, 2];
+
+    // Brute Force
 
     println!(
         "After Selection Sort: {:?}",
@@ -46,4 +49,19 @@ fn main() {
     brute_force::bfs(&graph, nodes[0]);
     print!("DFS: ");
     brute_force::dfs(&graph, nodes[0]);
+
+    // Divide and Conquer
+
+    let sorted_arr = divide_and_conquer::merge_sort(&unsorted_arr);
+    println!("After Merge Sort: {:?}", sorted_arr);
+
+    println!(
+        "Binary Search for 9: {:?}",
+        divide_and_conquer::binary_search(&sorted_arr, &9)
+    );
+
+    println!(
+        "Binary Search for 11: {:?}",
+        divide_and_conquer::binary_search(&sorted_arr, &11)
+    );
 }
