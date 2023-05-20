@@ -70,11 +70,38 @@ fn main() {
 
     // Dynamic Programming
 
-    let str1 = "APPLE";
-    let str2 = "PP";
+    let str1 = "GAGT";
+    let str2 = "ACATGT";
 
     println!(
         "Longest Common Subsequence: {}",
         dynamic_programming::lcs(str1, str2)
-    )
+    );
+
+    let gap_penalty = -1;
+
+    let (score_global, (align_str1_global, align_str2_global)) =
+        dynamic_programming::global_alignment(str1, str2, gap_penalty, score_fn);
+
+    println!("Global Score: {}", score_global);
+    println!("Global Alignment 1: {}", align_str1_global);
+    println!("Global Alignment 2: {}", align_str2_global);
+
+    let (score_local, (align_str1_local, align_str2_local)) =
+        dynamic_programming::local_alignment(str1, str2, gap_penalty, score_fn);
+
+    println!("Local Score: {}", score_local);
+    println!("Local Alignment 1: {}", align_str1_local);
+    println!("Local Alignment 2: {}", align_str2_local);
 }
+
+fn score_fn(x: char, y: char) -> i64 {
+    SCORING_MATRIX[week8::nucleotide_to_index(x)][week8::nucleotide_to_index(y)]
+}
+
+const SCORING_MATRIX: [[i64; 4]; 4] = [
+    [1, -3, -2, -3],
+    [-3, 1, -3, -2],
+    [-2, -3, 1, -3],
+    [-3, -2, -3, 1],
+];

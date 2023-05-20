@@ -269,39 +269,48 @@ fn binary_search<T: Ord>(arr: &[T], target: &T) -> bool {
 
 ### Dynamic Programming String
 
-#### Longest Common Subsequence
+#### Longest Common Subsequence (LCS)
 
-- **Input**: two strings $X$ and $Y$.
-- **Output**: the longest common subsequence (LCS) of $X$ and $Y$.
+- **Input**: Two strings $X$ and $Y$.
+
+- **Output**: The longest common subsequence of $X$ and $Y$.
+
 - **Time complexity**: $O(mn)$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively.
-- **Implementation**: For two strings $X$ and $Y$,
-  
-  1. Create a 2D DP table of size $m \times n$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively.
-  2. Fill the  DP table using:
+
+- **Implementation**: 
+
+  1. Create a 2D DP table of size $(m+1) \times (n+1)$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively. Let's denote this table as $dp$.
+
+  2. Initialize all cells of the DP table, $dp[i][j]$, to 0.
+
+  3. Fill the DP table using:
 
   $$
   \begin{align*}
   dp[i][j] =
   \begin{cases}
-  dp[i-1][j-1] + 1 & \text{if } X[i-1] = Y[j-1] \\
+  0 & \text{if } i = 0 \text{ or } j = 0, \\
+  dp[i-1][j-1] + 1 & \text{if } X[i-1] = Y[j-1], \\
   \max(dp[i-1][j], dp[i][j-1]) & \text{otherwise}
   \end{cases}
   \end{align*}
   $$
 
-  3. Backtrack the DP table to find the LCS using:
+  4. Backtrack the DP table to find the LCS. Starting from the cell $dp[m, n]$, backtrack until $dp[0, 0]$ is reached:
 
   $$
   \begin{align*}
   \text{{backtrack}}(dp, X, Y, i, j) =
   \begin{cases}
   \text{{empty string}} & \text{if } i = 0 \text{ or } j = 0,\\
-  \text{{backtrack}}(dp, X, Y, i-1, j-1) + X[i-1] & \text{if } X[i-1] = Y[j-1], \\
+  X[i-1] + \text{{backtrack}}(dp, X, Y, i-1, j-1) & \text{if } X[i-1] = Y[j-1], \\
   \text{{backtrack}}(dp, X, Y, i-1, j) & \text{if } X[i-1] \neq Y[j-1] \text{ and } dp[i-1][j] \geq dp[i][j-1],\\
   \text{{backtrack}}(dp, X, Y, i, j-1) & \text{if } X[i-1] \neq Y[j-1] \text{ and } dp[i][j-1] > dp[i-1][j].
   \end{cases}
   \end{align*}
   $$
+
+The result is the longest common subsequence of $X$ and $Y$. Note that there may be multiple LCSs if there are multiple ways to reach the same length. This algorithm finds one of them.
 
 [Here](./review/src/dynamic_programming.rs) is the code:
 
@@ -325,7 +334,7 @@ fn lcs(str1: &str, str2: &str) -> String {
     backtrack_lcs(&dp, str1, str2, m, n)
 }
 
-fn backtrack_lcs(dp: &Vec<Vec<usize>>, str1: &str, str2: &str, i: usize, j: usize) -> String {
+fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: usize) -> String {
     if i == 0 || j == 0 {
         String::new()
     } else if str1.chars().nth(i - 1) == str2.chars().nth(j - 1) {
@@ -344,3 +353,251 @@ fn backtrack_lcs(dp: &Vec<Vec<usize>>, str1: &str, str2: &str, i: usize, j: usiz
 }
 ```
 
+#### Pairwise Sequence Alignment (Global - Needleman-Wunsch algorithm)
+
+- **Input**: Two sequences $A$ and $B$.
+
+- **Output**: An optimal global alignment of $A$ and $B$.
+
+- **Time complexity**: $O(mn)$, where $m$ and $n$ are the lengths of $A$ and $B$ respectively.
+
+- **Implementation**:
+
+  1. Create a 2D DP table of size $(m+1) \times (n+1)$, where $m$ and $n$ are the lengths of $A$ and $B$ respectively. Let's denote the matrix as $M$.
+
+  2. Initialize the first row and the first column of the DP table as multiples of the gap penalty.
+
+  3. Fill the DP table using:
+  
+  $$
+  \begin{align*}
+  M[i, j] = \max \begin{cases} 
+  M[i-1, j-1] + S(A_i, B_j) \\
+  M[i-1, j] + G \\
+  M[i, j-1] + G \\
+  \end{cases}
+  \end{align*}
+  $$
+
+  where:
+  - $S(A_i, B_j)$ is the score of aligning residue $A_i$ with residue $B_j$. This would usually be a match score if $A_i$ and $B_j$ are the same, and a mismatch score if they are different.
+  - $G$ is the gap penalty.
+
+  4. Backtrack the DP table to find the optimal alignment. Starting from the cell $M[m, n]$, backtrack until $M[0, 0]$ is reached:
+
+  $$
+  \begin{align*}
+  \text{{backtrack}}(M, A, B, i, j) =
+  \begin{cases}
+  \text{{empty alignment}} & \text{if } i = 0 \text{ and } j = 0,\\
+  (A_i, -) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i-1, j) & \text{if } M[i, j] = M[i-1, j] + G,\\
+  (-, B_j) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i, j-1) & \text{if } M[i, j] = M[i, j-1] + G,\\
+  (A_i, B_j) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i-1, j-1) & \text{if } M[i, j] = M[i-1, j-1] + S(A_i, B_j).
+  \end{cases}
+  \end{align*}
+  $$
+
+  The result is a pairwise alignment of $A$ and $B$ that maximizes the total alignment score.
+  
+  [Here](./review/src/dynamic_programming.rs) is the code:
+  
+  ```rust
+  fn global_alignment(
+      str1: &str,
+      str2: &str,
+      gap_penalty: i64,
+      score: fn(char, char) -> i64,
+  ) -> (i64, (String, String)) {
+      let m = str1.len();
+      let n = str2.len();
+  
+      let mut dp = vec![vec![0; n + 1]; m + 1];
+  
+      // Initialize the DP table
+      for i in 0..=m {
+          dp[i][0] = i as i64 * gap_penalty;
+      }
+      for j in 0..=n {
+          dp[0][j] = j as i64 * gap_penalty;
+      }
+  
+      // Fill the DP table
+      for i in 1..=m {
+          for j in 1..=n {
+              let match_score = dp[i - 1][j - 1]
+                  + score(
+                      str1.chars().nth(i - 1).unwrap(),
+                      str2.chars().nth(j - 1).unwrap(),
+                  );
+              let delete = dp[i - 1][j] + gap_penalty;
+              let insert = dp[i][j - 1] + gap_penalty;
+              dp[i][j] = match_score.max(delete).max(insert);
+          }
+      }
+  
+      // Backtrack to find the optimal alignment
+      let alignment = backtrack_global_alignment(&dp, str1, str2, m, n, gap_penalty, score);
+  
+      (dp[m][n], alignment)
+  }
+  
+  fn backtrack_global_alignment(
+      dp: &Vec<Vec<i64>>,
+      str1: &str,
+      str2: &str,
+      i: usize,
+      j: usize,
+      gap_penalty: i64,
+      score: fn(char, char) -> i64,
+  ) -> (String, String) {
+      if i == 0 && j == 0 {
+          (String::new(), String::new())
+      } else if i > 0 && dp[i][j] == dp[i - 1][j] + gap_penalty {
+          let (x, y) = backtrack_global_alignment(dp, str1, str2, i - 1, j, gap_penalty, score);
+          (
+              format!("{}{}", x, str1.chars().nth(i - 1).unwrap()),
+              format!("{}-", y),
+          )
+      } else if j > 0 && dp[i][j] == dp[i][j - 1] + gap_penalty {
+          let (x, y) = backtrack_global_alignment(dp, str1, str2, i, j - 1, gap_penalty, score);
+          (
+              format!("{}-", x),
+              format!("{}{}", y, str2.chars().nth(j - 1).unwrap()),
+          )
+      } else {
+          let (x, y) = backtrack_global_alignment(dp, str1, str2, i - 1, j - 1, gap_penalty, score);
+          (
+              format!("{}{}", x, str1.chars().nth(i - 1).unwrap()),
+              format!("{}{}", y, str2.chars().nth(j - 1).unwrap()),
+          )
+      }
+  }
+  ```
+  
+  
+
+#### Pairwise Sequence Alignment (Local - Smith-Waterman algorithm)
+
+- **Input**: Two sequences $A$ and $B$.
+
+- **Output**: An optimal local alignment of $A$ and $B$.
+
+- **Time complexity**: $O(mn)$, where $m$ and $n$ are the lengths of $A$ and $B$ respectively.
+
+- **Implementation**:
+
+  1. Create a 2D DP table of size $(m+1) \times (n+1)$, where $m$ and $n$ are the lengths of $A$ and $B$ respectively. Let's denote the matrix as $M$.
+
+  2. Initialize the first row and the first column of the DP table to 0.
+
+  3. Fill the DP table using:
+  
+  $$
+  \begin{align*}
+  M[i, j] = \max \begin{cases} 
+  0 \\
+  M[i-1, j-1] + S(A_i, B_j) \\
+  M[i-1, j] + G \\
+  M[i, j-1] + G \\
+  \end{cases}
+  \end{align*}
+  $$
+
+  where:
+  - $S(A_i, B_j)$ is the score of aligning residue $A_i$ with residue $B_j$. This would usually be a match score if $A_i$ and $B_j$ are the same, and a mismatch score if they are different.
+  - $G$ is the gap penalty.
+
+  4. Backtrack the DP table to find the optimal alignment. Starting from the cell with the maximum value, backtrack until a cell with a value of 0 is reached:
+
+  $$
+  \begin{align*}
+  \text{{backtrack}}(M, A, B, i, j) =
+  \begin{cases}
+  \text{{empty alignment}} & \text{if } M[i, j] = 0,\\
+  (A_i, -) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i-1, j) & \text{if } M[i, j] = M[i-1, j] + G,\\
+  (-, B_j) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i, j-1) & \text{if } M[i, j] = M[i, j-1] + G,\\
+  (A_i, B_j) \, \text{{concat}} \, \text{{backtrack}}(M, A, B, i-1, j-1) & \text{if } M[i, j] = M[i-1, j-1] + S(A_i, B_j).
+  \end{cases}
+  \end{align*}
+  $$
+
+  The result is a pairwise alignment of $A$ and $B$ that maximizes the total alignment score over all possible local alignments.
+  
+  [Here](./review/src/dynamic_programming.rs) is the code:
+  
+  ```rust
+  fn local_alignment(
+      str1: &str,
+      str2: &str,
+      gap_penalty: i64,
+      score: fn(char, char) -> i64,
+  ) -> (i64, (String, String)) {
+      let m = str1.len();
+      let n = str2.len();
+  
+      let mut dp = vec![vec![0; n + 1]; m + 1];
+  
+      let mut max_i = 0;
+      let mut max_j = 0;
+      let mut max_score = 0;
+  
+      // Fill the DP table
+      for i in 1..=m {
+          for j in 1..=n {
+              let match_score = dp[i - 1][j - 1]
+                  + score(
+                      str1.chars().nth(i - 1).unwrap(),
+                      str2.chars().nth(j - 1).unwrap(),
+                  );
+              let delete = dp[i - 1][j] + gap_penalty;
+              let insert = dp[i][j - 1] + gap_penalty;
+              dp[i][j] = 0.max(match_score.max(delete).max(insert));
+  
+              if dp[i][j] > max_score {
+                  max_score = dp[i][j];
+                  max_i = i;
+                  max_j = j;
+              }
+          }
+      }
+  
+      // Backtrack to find the optimal alignment
+      let alignment = backtrack_local_alignment(&dp, str1, str2, max_i, max_j, gap_penalty, score);
+  
+      (max_score, alignment)
+  }
+  
+  fn backtrack_local_alignment(
+      dp: &Vec<Vec<i64>>,
+      str1: &str,
+      str2: &str,
+      i: usize,
+      j: usize,
+      gap_penalty: i64,
+      score: fn(char, char) -> i64,
+  ) -> (String, String) {
+      if dp[i][j] == 0 {
+          (String::new(), String::new())
+      } else if i > 0 && dp[i][j] == dp[i - 1][j] + gap_penalty {
+          let (x, y) = backtrack_local_alignment(dp, str1, str2, i - 1, j, gap_penalty, score);
+          (
+              format!("{}{}", x, str1.chars().nth(i - 1).unwrap()),
+              format!("{}-", y),
+          )
+      } else if j > 0 && dp[i][j] == dp[i][j - 1] + gap_penalty {
+          let (x, y) = backtrack_local_alignment(dp, str1, str2, i, j - 1, gap_penalty, score);
+          (
+              format!("{}-", x),
+              format!("{}{}", y, str2.chars().nth(j - 1).unwrap()),
+          )
+      } else {
+          let (x, y) = backtrack_local_alignment(dp, str1, str2, i - 1, j - 1, gap_penalty, score);
+          (
+              format!("{}{}", x, str1.chars().nth(i - 1).unwrap()),
+              format!("{}{}", y, str2.chars().nth(j - 1).unwrap()),
+          )
+      }
+  }
+  ```
+  
+  
