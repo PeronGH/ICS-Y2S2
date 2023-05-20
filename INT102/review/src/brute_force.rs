@@ -75,22 +75,16 @@ pub fn bfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
         }
     }
 
-    println!();
     visited
 }
 
-pub fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
-    let mut stack = vec![start];
-    let mut visited = HashSet::new();
+pub fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex, visited: &mut HashSet<NodeIndex>) {
+    visited.insert(start);
+    print!("{:?} ", start);
 
-    while let Some(node) = stack.pop() {
-        if !visited.contains(&node) {
-            visited.insert(node);
-            print!("{:?} ", node);
-            stack.extend(graph.neighbors(node));
+    for neighbor in graph.neighbors(start) {
+        if !visited.contains(&neighbor) {
+            dfs(graph, neighbor, visited);
         }
     }
-
-    println!();
-    visited
 }

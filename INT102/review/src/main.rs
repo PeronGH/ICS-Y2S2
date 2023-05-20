@@ -2,6 +2,7 @@ mod brute_force;
 mod divide_and_conquer;
 use brute_force::BruteForceSorting;
 use petgraph::Graph;
+use std::collections::HashSet;
 
 fn main() {
     let unsorted_arr = [7, 5, 3, 2, 6, 8, 9, 4, 2];
@@ -47,8 +48,9 @@ fn main() {
 
     print!("BFS: ");
     brute_force::bfs(&graph, nodes[0]);
-    print!("DFS: ");
-    brute_force::dfs(&graph, nodes[0]);
+    print!("\nDFS: ");
+    brute_force::dfs(&graph, nodes[0], &mut HashSet::new());
+    println!();
 
     // Divide and Conquer
 

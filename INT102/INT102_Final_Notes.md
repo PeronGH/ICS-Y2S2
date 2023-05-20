@@ -184,19 +184,16 @@ fn bfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
 [Here](./review/src/brute_force.rs) is the code:
 
 ```rust
-fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex) -> HashSet<NodeIndex> {
-    let mut stack = vec![start];
-    let mut visited = HashSet::new();
+fn dfs<N, E>(graph: &Graph<N, E>, start: NodeIndex, visited: &mut HashSet<NodeIndex>) {
+    visited.insert(start);
 
-    while let Some(node) = stack.pop() {
-        if !visited.contains(&node) {
-            visited.insert(node);
-            stack.extend(graph.neighbors(node));
+    for neighbor in graph.neighbors(start) {
+        if !visited.contains(&neighbor) {
+            dfs(graph, neighbor, visited);
         }
     }
-
-    visited
 }
+
 ```
 
 ## Divide and Conquer
