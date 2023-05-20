@@ -277,7 +277,7 @@ fn binary_search<T: Ord>(arr: &[T], target: &T) -> bool {
 
 - **Time complexity**: $O(mn)$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively.
 
-- **Implementation**: 
+- **Implementation**:
 
   1. Create a 2D DP table of size $(m+1) \times (n+1)$, where $m$ and $n$ are the lengths of $X$ and $Y$ respectively. Let's denote this table as $dp$.
 
@@ -371,7 +371,7 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
   
   $$
   \begin{align*}
-  M[i, j] = \max \begin{cases} 
+  M[i, j] = \max \begin{cases}
   M[i-1, j-1] + S(A_i, B_j) \\
   M[i-1, j] + G \\
   M[i, j-1] + G \\
@@ -474,8 +474,6 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
   }
   ```
   
-  
-
 #### Pairwise Sequence Alignment (Local - Smith-Waterman algorithm)
 
 - **Input**: Two sequences $A$ and $B$.
@@ -494,7 +492,7 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
   
   $$
   \begin{align*}
-  M[i, j] = \max \begin{cases} 
+  M[i, j] = \max \begin{cases}
   0 \\
   M[i-1, j-1] + S(A_i, B_j) \\
   M[i-1, j] + G \\
@@ -599,5 +597,33 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
       }
   }
   ```
-  
-  
+
+### Dynamic Programming Graph
+
+#### Floyd's Algorithm
+
+- **Input**: A weighted graph $G$ with $n$ vertices, represented by an adjacency matrix.
+
+- **Output**: A matrix $D$ where each cell $D[i][j]$ represents the shortest distance from vertex $i$ to vertex $j$ in graph $G$.
+
+- **Time complexity**: $O(n^3)$, where $n$ is the number of vertices in the graph.
+
+- **Implementation**:
+
+  1. Create a 2D matrix $D$ such that $D[i][j]$ contains the direct distance from node $i$ to node $j$ (or infinity if there is no direct link).
+
+  2. For each node $k$, consider each pair of nodes $i$ and $j$ and check if going from $i$ to $j$ through the node $k$ improves the current shortest path from $i$ to $j$. If it does, update the cell $D[i][j]$ with the new shorter distance. This can be formalized as:
+
+  $$
+  \begin{align*}
+  D[i][j] =
+  \begin{cases}
+  D[i][j] & \text{if } D[i][j] \leq D[i][k] + D[k][j], \\
+  D[i][k] + D[k][j] & \text{otherwise}
+  \end{cases}
+  \end{align*}
+  $$
+
+  3. Repeat the above step until all nodes have been considered as intermediate nodes.
+
+At the end, $D[i][j]$ will contain the shortest distance from node $i$ to node $j$ in graph $G$. Note that Floyd's algorithm works for both positive and negative edge weights, but cannot handle negative cycles.

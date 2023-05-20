@@ -93,6 +93,17 @@ fn main() {
     println!("Local Score: {}", score_local);
     println!("Local Alignment 1: {}", align_str1_local);
     println!("Local Alignment 2: {}", align_str2_local);
+
+    let adj_matrix = vec![
+        vec![0, 5, std::i64::MAX, 10],
+        vec![std::i64::MAX, 0, 3, std::i64::MAX],
+        vec![std::i64::MAX, std::i64::MAX, 0, 1],
+        vec![std::i64::MAX, std::i64::MAX, std::i64::MAX, 0],
+    ];
+
+    for row in &dynamic_programming::floyd_warshall(&adj_matrix) {
+        println!("{:?}", row);
+    }
 }
 
 fn score_fn(x: char, y: char) -> i64 {

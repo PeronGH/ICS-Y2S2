@@ -178,3 +178,20 @@ fn backtrack_local_alignment(
         )
     }
 }
+
+pub fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
+    let n = adj_matrix.len();
+    let mut dist = adj_matrix.clone();
+
+    for k in 0..n {
+        for i in 0..n {
+            for j in 0..n {
+                if dist[i][k] != i64::MAX && dist[k][j] != i64::MAX {
+                    dist[i][j] = dist[i][j].min(dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+    }
+
+    dist
+}
