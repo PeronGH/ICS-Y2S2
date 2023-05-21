@@ -714,3 +714,50 @@ pub fn assembly_line_scheduling(
 }
 ```
 
+## Greedy
+
+### Greedy Graph
+
+#### Prim’s Algorithm
+
+- **Input**: A connected, undirected graph with weights assigned to each edge.
+
+- **Output**: A minimum spanning tree (MST) for the input graph. The MST is a tree that includes every vertex, where the sum of weights of all the edges in the tree is minimized.
+
+- **Time complexity**: $O(E \log V)$, where $V$ is the number of vertices and $E$ is the number of edges in the graph, assuming that a binary heap or Fibonacci heap is used as a priority queue.
+
+- **Implementation**: Starting with an arbitrary vertex, iteratively add the smallest edge that connects the current tree with a new vertex, until all vertices are included.
+
+#### Kruskal’s Algorithm
+
+- **Input**: A connected, undirected graph with weights assigned to each edge.
+
+- **Output**: A minimum spanning tree (MST) for the input graph. The MST is a tree that spans all vertices and minimizes the total weight of its edges.
+
+- **Time complexity**: $O(E \log E)$, where $E$ is the number of edges in the graph. This comes from the need to sort the edges.
+
+- **Implementation**: Sort all edges, and continuously add the smallest edge without creating a cycle, until all vertices are connected.
+
+#### Dijkstra's Algorithm
+
+- **Input**: A weighted graph with non-negative edges and a source vertex.
+
+- **Output**: Shortest path from the source vertex to all other vertices.
+
+- **Time complexity**: $O((V+E) \log V)$, with $V$ as vertices and $E$ as edges, using a priority queue for the unvisited vertices.
+
+- **Implementation**: From a starting node, iteratively select the unvisited node with the smallest tentative distance, update distances of its neighbours, and mark it as visited until all nodes have been visited.
+
+## Space/Time
+
+### Space/Time Sort
+
+#### Counting Sort
+
+- **Input**: An array of integers within a known, small range.
+
+- **Output**: A sorted array of the input integers.
+
+- **Time complexity**: $O(n + k)$, where $n$ is the number of elements in the input array, and $k$ is the range of the input. 
+
+- **Implementation**: Create an auxiliary array of size 'k' to count the occurrence of each integer in the input array, then modify this auxiliary array to get the actual positions of each integer in the output array, finally populate the output array using these positions.

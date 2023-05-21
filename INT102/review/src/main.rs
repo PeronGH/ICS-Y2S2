@@ -3,7 +3,7 @@ mod divide_and_conquer;
 mod dynamic_programming;
 mod greedy;
 use brute_force::BruteForceSorting;
-use petgraph::Graph;
+use petgraph::prelude::*;
 use std::collections::HashSet;
 
 fn main() {
