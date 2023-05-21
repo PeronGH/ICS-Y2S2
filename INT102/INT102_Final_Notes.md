@@ -903,3 +903,44 @@ pub fn horspool_search(text: &str, pattern: &str) -> Option<usize> {
 }
 ```
 
+## Branch&Bound 
+
+### Branch&Bound Graph
+
+#### Branch and Bound Solver for Assignment Problem
+
+- **Input**: A cost matrix $C$ of size $n \times n$ where each cell $C[i][j]$ represents the cost of assigning the $i^{th}$ worker to the $j^{th}$ job.
+
+- **Output**: An optimal assignment of jobs to workers that minimizes the total cost.
+
+- **Time complexity**: $O(n!)$ in worst case, where $n$ is the number of jobs or workers (assumed equal for a well-defined problem).
+
+- **Implementation**:
+
+  1. **Branching**: Start by creating branches for every possible worker-job assignment.
+
+  2. **Lower Bound Calculation**: For each branch, compute a lower bound on the total cost. This can be done by:
+     - Ignoring the rows of workers who have been assigned and the columns of jobs that have been assigned in the cost matrix.
+     - Summing up the minimum cost in each remaining row.
+     - Adding the cost of the worker-job assignments already made in this branch.
+
+  3. **Pruning**: If the lower bound for a branch exceeds the cost of the best known solution, discard that branch.
+
+  4. **Recursive Search**: Apply these steps recursively to the branches until you find an optimal assignment.
+
+#### Traveling Salesman Problem (TSP)
+
+- **Input**: An undirected graph $G$ with $n$ vertices, where each edge represents a path between two cities and has a weight representing the distance between those cities.
+
+- **Output**: A minimum-length tour that starts from a given vertex, visits every other vertex exactly once, and then returns to the starting vertex.
+
+- **Time complexity**: $O(n!)$ in the worst case, where $n$ is the number of vertices in the graph. However, the branch and bound technique can significantly cut down the search space, and therefore the actual time complexity may be much lower in practice.
+
+- **Implementation**:
+
+  1. **Marking**: Mark the edges that have already been traversed as mandatory.
+2. **Lower Bound Calculation**: For each node, compute a lower bound on the total cost. This can be done by:
+     - For each row in the adjacency matrix, select the smallest value (if a value has been marked as mandatory, select it) and the smallest value in the corresponding column (other than the mandatory value). Take the average of these two values and add it to the lower bound.
+     - Add the cost of the mandatory edges to the lower bound.
+  3. **Pruning**: If the lower bound for a node exceeds the cost of the best known tour, discard that node.
+4. **Branching and Recursive Search**: In the state space tree, choose the node (or nodes) with the lowest lower bound and perform a depth-first search on its subtree to decide the next steps. Prune other nodes with higher lower bounds.

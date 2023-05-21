@@ -3,6 +3,7 @@ mod divide_and_conquer;
 mod dynamic_programming;
 mod greedy;
 mod space_for_time;
+mod branch_and_bound;
 use brute_force::BruteForceSorting;
 use petgraph::prelude::*;
 use std::collections::HashSet;
