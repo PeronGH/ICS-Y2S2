@@ -944,3 +944,70 @@ pub fn horspool_search(text: &str, pattern: &str) -> Option<usize> {
      - Add the cost of the mandatory edges to the lower bound.
   3. **Pruning**: If the lower bound for a node exceeds the cost of the best known tour, discard that node.
 4. **Branching and Recursive Search**: In the state space tree, choose the node (or nodes) with the lowest lower bound and perform a depth-first search on its subtree to decide the next steps. Prune other nodes with higher lower bounds.
+
+## Backtracking
+
+### Backtracking Combinatory
+
+#### N-Queens
+
+- **Input**: An integer $n$.
+
+- **Output**: All distinct solutions to the N-Queens puzzle where $n$ queens are placed on an $n\times n$ chess board such that no two queens threaten each other.
+
+- **Time complexity**: $O(n!)$, as there are $n!$ permutations and we are essentially generating all of them.
+
+- **Implementation**:
+
+  1. Start in the leftmost column.
+
+  2. If all queens are placed return the solution.
+
+  3. Try all rows in the current column. Do following for every tried row:
+
+    - If the queen can be placed safely in this row, mark this cell in the current column as part of the solution and recursively check if placing queen here leads to a solution.
+
+    - If placing the queen in the current row leads to a solution, return true.
+
+    - If placing the queen doesn't lead to a solution, unmark this cell (backtrack) and go to step (a) to try other rows.
+
+  4. If all rows have been tried and nothing worked, return false to trigger backtracking.
+
+[Here](./review/src/backtracking.rs) is the code:
+
+```rust
+fn is_safe(board: &[Vec<bool>], row: usize, col: usize) -> bool {
+    // Check this row on left side
+    (0..col).all(|i| !board[row][i]) 
+    && // Check upper diagonal on left side
+    (0..=row.min(col)).rev().all(|i| !board[row - i][col - i]) 
+    && // Check lower diagonal on left side
+    (0..=board.len().saturating_sub(row+1).min(col)).all(|i| !board[row + i][col - i])
+}
+
+fn solve_n_queens_util(board: &mut [Vec<bool>], col: usize) -> Option<()> {
+    if col >= board.len() {
+        return Some(());
+    }
+
+    (0..board.len())
+        .find(|&row| {
+            if is_safe(board, row, col) {
+                board[row][col] = true;
+                if solve_n_queens_util(board, col + 1).is_some() {
+                    return true;
+                }
+                board[row][col] = false;
+            }
+            false
+        })
+        .map(|_| ())
+}
+
+fn solve_n_queens(n: usize) -> Option<Vec<Vec<bool>>> {
+    let mut board = vec![vec![false; n]; n];
+    solve_n_queens_util(&mut board, 0)?;
+    Some(board)
+}
+```
+

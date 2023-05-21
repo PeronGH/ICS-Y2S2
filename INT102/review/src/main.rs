@@ -1,9 +1,10 @@
+mod backtracking;
+mod branch_and_bound;
 mod brute_force;
 mod divide_and_conquer;
 mod dynamic_programming;
 mod greedy;
 mod space_for_time;
-mod branch_and_bound;
 use brute_force::BruteForceSorting;
 use petgraph::prelude::*;
 use std::collections::HashSet;
@@ -163,7 +164,17 @@ fn main() {
     println!(
         "Horspool Search: {:?}",
         space_for_time::horspool_search(haystack, needle)
-    )
+    );
+
+    // Backtracking
+
+    for row in backtracking::solve_n_queens(5).unwrap() {
+        print!("|");
+        for cell in row {
+            print!("{}|", if cell { "X" } else { " " })
+        }
+        println!()
+    }
 }
 
 fn score_fn(x: char, y: char) -> i64 {
