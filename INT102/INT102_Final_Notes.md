@@ -830,8 +830,8 @@ pub fn horspool_search(text: &str, pattern: &str) -> Option<usize> {
         if text
             .chars()
             .skip(skip)
-            .collect::<String>()
-            .starts_with(pattern)
+            .zip(pattern.chars())
+            .all(|(a, b)| a == b)
         {
             return Some(skip);
         }

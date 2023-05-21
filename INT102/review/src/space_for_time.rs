@@ -59,8 +59,8 @@ pub fn horspool_search(text: &str, pattern: &str) -> Option<usize> {
         if text
             .chars()
             .skip(skip)
-            .collect::<String>()
-            .starts_with(pattern)
+            .zip(pattern.chars())
+            .all(|(a, b)| a == b)
         {
             // Step 4.1.1: If the pattern is found, return the position and comparison count
             return Some(skip);
