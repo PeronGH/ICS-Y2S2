@@ -792,3 +792,56 @@ fn counting_sort(input_arr: &[usize]) -> Vec<usize> {
 }
 ```
 
+### Space/Time String
+
+#### Horspool’s Algorithm
+
+- **Input**: A text string and a pattern string.
+
+- **Output**: The starting index of the first occurrence of the pattern in the text, or None if the pattern is not found.
+
+- **Time complexity**: Average and best case time complexity is $O(n)$, but the worst-case time complexity is $O(nm)$, where $n$ is the length of the text and $m$ is the length of the pattern.
+
+- **Implementation**: Preprocess the pattern by creating a table of the right-most occurrences of each character in the pattern (except the last character), then repeatedly shift the pattern over the text by using the table to determine the maximum possible shift until a match is found or all positions have been checked.
+
+[Here](./review/src/space_for_time.rs) is the code:
+
+```rust
+fn create_shift_table(pattern: &str) -> HashMap<char, usize> {
+    let m = pattern.len();
+    pattern
+        .chars()
+        .enumerate()
+        .take(m - 1)
+        .map(|(i, ch)| (ch, m - i - 1))
+        .collect()
+}
+
+pub fn horspool_search(text: &str, pattern: &str) -> Option<usize> {
+    let (n, m) = (text.len(), pattern.len());
+    if n < m {
+        return None;
+    }
+
+    let shift_table = create_shift_table(pattern);
+    let mut skip = 0;
+
+    while skip <= n - m {
+        if text
+            .chars()
+            .skip(skip)
+            .collect::<String>()
+            .starts_with(pattern)
+        {
+            return Some(skip);
+        }
+
+        skip += shift_table
+            .get(&text.chars().skip(skip).nth(m - 1).unwrap())
+            .unwrap_or(&m);
+    }
+
+    None
+}
+```
+

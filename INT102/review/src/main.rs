@@ -27,12 +27,12 @@ fn main() {
         unsorted_arr.clone().insertion_sort()
     );
 
-    let haystack = b"Hello, world!";
-    let needle = b"world";
+    let haystack = "Hello, world!";
+    let needle = "world";
 
     println!(
         "Linear Search: {:?}",
-        brute_force::linear_search(haystack, needle)
+        brute_force::linear_search(haystack.as_bytes(), needle.as_bytes())
     );
 
     let mut graph: Graph<(), ()> = Graph::new();
@@ -122,6 +122,11 @@ fn main() {
         "After Counting Sort: {:?}",
         space_for_time::counting_sort(&unsorted_arr)
     );
+
+    println!(
+        "Horspool Search: {:?}",
+        space_for_time::horspool_search(haystack, needle)
+    )
 }
 
 fn score_fn(x: char, y: char) -> i64 {
