@@ -216,14 +216,14 @@ pub fn bellman_ford<N>(graph: &Graph<N, f64>, source: NodeIndex) -> Option<Vec<f
     Some(dist)
 }
 
-pub fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
+pub fn floyd_warshall(adj_matrix: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let n = adj_matrix.len();
     let mut dist = adj_matrix.clone();
 
     for k in 0..n {
         for i in 0..n {
             for j in 0..n {
-                if dist[i][k] != i64::MAX && dist[k][j] != i64::MAX {
+                if dist[i][k] != f64::INFINITY && dist[k][j] != f64::INFINITY {
                     dist[i][j] = dist[i][j].min(dist[i][k] + dist[k][j]);
                 }
             }

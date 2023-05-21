@@ -122,13 +122,21 @@ fn main() {
         None => println!("Graph contains a negative cycle"),
     }
 
-    let adj_matrix = vec![
-        vec![0, 5, 4, i64::MAX, i64::MAX],               // edges from node1
-        vec![i64::MAX, 0, -2, i64::MAX, 6],              // edges from node2
-        vec![i64::MAX, i64::MAX, 0, 3, i64::MAX],        // edges from node3
-        vec![i64::MAX, i64::MAX, i64::MAX, 0, 2],        // edges from node4
-        vec![i64::MAX, i64::MAX, i64::MAX, i64::MAX, 0], // edges from node5
-    ];
+    let adj_matrix = {
+        let n = graph.node_count();
+        let mut matrix: Vec<Vec<f64>> = vec![vec![f64::INFINITY; n]; n];
+
+        for edge in graph.edge_references() {
+            let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
+            matrix[u][v] = weight;
+        }
+
+        for i in 0..n {
+            matrix[i][i] = 0.0;
+        }
+
+        matrix
+    };
 
     for row in &dynamic_programming::floyd_warshall(&adj_matrix) {
         println!("{:?}", row);

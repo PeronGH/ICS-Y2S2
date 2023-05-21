@@ -622,6 +622,43 @@ Remember that the Bellman-Ford algorithm is capable of handling graphs in which 
 
 [Here](./review/src/dynamic_programming.rs) is the code:
 
+```rust
+fn bellman_ford<N>(graph: &Graph<N, f64>, source: NodeIndex) -> Option<Vec<f64>> {
+    let n = graph.node_count();
+    let mut dist = vec![INFINITY; n];
+
+    let source_index = source.index();
+
+    // Distance from source to itself is 0
+    dist[source_index] = 0.0;
+
+    // Relax edges repeatedly
+    for _ in 0..n - 1 {
+        for edge in graph.edge_references() {
+            let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
+
+            if dist[u] + weight < dist[v] {
+                dist[v] = dist[u] + weight;
+            }
+        }
+    }
+
+    // Check for negative weight cycles
+    for edge in graph.edge_references() {
+        let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
+
+        if dist[u] + weight < dist[v] {
+            // Graph contains negative weight cycle
+            return None;
+        }
+    }
+
+    Some(dist)
+}
+```
+
+
+
 #### Floyd's Algorithm
 
 - **Input**: A weighted graph $G$ with $n$ vertices, represented by an adjacency matrix.
@@ -651,14 +688,14 @@ At the end, $D[i][j]$ will contain the shortest distance from node $i$ to node $
 [Here](./review/src/dynamic_programming.rs) is the code:
 
 ```rust
-fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {
+fn floyd_warshall(adj_matrix: &Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let n = adj_matrix.len();
     let mut dist = adj_matrix.clone();
 
     for k in 0..n {
         for i in 0..n {
             for j in 0..n {
-                if dist[i][k] != i64::MAX && dist[k][j] != i64::MAX {
+                if dist[i][k] != f64::INFINITY && dist[k][j] != f64::INFINITY {
                     dist[i][j] = dist[i][j].min(dist[i][k] + dist[k][j]);
                 }
             }
