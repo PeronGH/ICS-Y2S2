@@ -750,7 +750,7 @@ pub fn assembly_line_scheduling(
 
 ## Space/Time
 
-### Space/Time Sort
+### Space/Time Sorting
 
 #### Counting Sort
 
@@ -761,3 +761,34 @@ pub fn assembly_line_scheduling(
 - **Time complexity**: $O(n + k)$, where $n$ is the number of elements in the input array, and $k$ is the range of the input. 
 
 - **Implementation**: Create an auxiliary array of size 'k' to count the occurrence of each integer in the input array, then modify this auxiliary array to get the actual positions of each integer in the output array, finally populate the output array using these positions.
+
+[Here](./review/src/space_for_time.rs) is the code:
+
+```rust
+fn counting_sort(input_arr: &[usize]) -> Vec<usize> {
+    let max_val = match input_arr.iter().max() {
+        Some(&max) => max,
+        None => return vec![],
+    };
+
+    let mut count_arr = vec![0; max_val + 1];
+
+    for &num in input_arr {
+        count_arr[num] += 1;
+    }
+
+    for i in 1..count_arr.len() {
+        count_arr[i] += count_arr[i - 1];
+    }
+
+    let mut output_arr = vec![0; input_arr.len()];
+
+    for &num in input_arr.iter().rev() {
+        output_arr[count_arr[num] - 1] = num;
+        count_arr[num] -= 1;
+    }
+
+    output_arr
+}
+```
+

@@ -2,6 +2,7 @@ mod brute_force;
 mod divide_and_conquer;
 mod dynamic_programming;
 mod greedy;
+mod space_for_time;
 use brute_force::BruteForceSorting;
 use petgraph::prelude::*;
 use std::collections::HashSet;
@@ -114,6 +115,12 @@ fn main() {
     println!(
         "Minimum time by Assembly Line Scheduling Algorithm: {}",
         dynamic_programming::assembly_line_scheduling(a, t, e, x)
+    );
+
+    // Space/Time
+    println!(
+        "After Counting Sort: {:?}",
+        space_for_time::counting_sort(&unsorted_arr)
     );
 }
 
