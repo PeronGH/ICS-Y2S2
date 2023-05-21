@@ -35,24 +35,24 @@ fn main() {
         brute_force::linear_search(haystack.as_bytes(), needle.as_bytes())
     );
 
-    let mut graph: Graph<(), ()> = Graph::new();
+    let mut tree: Graph<(), ()> = Graph::new();
 
-    let nodes: Vec<_> = (0..10).map(|_| graph.add_node(())).collect();
+    let nodes: Vec<_> = (0..10).map(|_| tree.add_node(())).collect();
 
-    graph.add_edge(nodes[0], nodes[1], ());
-    graph.add_edge(nodes[0], nodes[2], ());
-    graph.add_edge(nodes[1], nodes[3], ());
-    graph.add_edge(nodes[1], nodes[4], ());
-    graph.add_edge(nodes[2], nodes[5], ());
-    graph.add_edge(nodes[2], nodes[6], ());
-    graph.add_edge(nodes[4], nodes[7], ());
-    graph.add_edge(nodes[4], nodes[8], ());
-    graph.add_edge(nodes[7], nodes[9], ());
+    tree.add_edge(nodes[0], nodes[1], ());
+    tree.add_edge(nodes[0], nodes[2], ());
+    tree.add_edge(nodes[1], nodes[3], ());
+    tree.add_edge(nodes[1], nodes[4], ());
+    tree.add_edge(nodes[2], nodes[5], ());
+    tree.add_edge(nodes[2], nodes[6], ());
+    tree.add_edge(nodes[4], nodes[7], ());
+    tree.add_edge(nodes[4], nodes[8], ());
+    tree.add_edge(nodes[7], nodes[9], ());
 
     print!("BFS: ");
-    brute_force::bfs(&graph, nodes[0]);
+    brute_force::bfs(&tree, nodes[0]);
     print!("\nDFS: ");
-    brute_force::dfs(&graph, nodes[0], &mut HashSet::new());
+    brute_force::dfs(&tree, nodes[0], &mut HashSet::new());
     println!();
 
     // Divide and Conquer
@@ -96,11 +96,38 @@ fn main() {
     println!("Local Alignment 1: {}", align_str1_local);
     println!("Local Alignment 2: {}", align_str2_local);
 
+    let mut graph = Graph::<_, f64>::new();
+
+    let node1 = graph.add_node("node1");
+    let node2 = graph.add_node("node2");
+    let node3 = graph.add_node("node3");
+    let node4 = graph.add_node("node4");
+    let node5 = graph.add_node("node5");
+
+    graph.add_edge(node1, node2, 5.);
+    graph.add_edge(node1, node3, 4.);
+    graph.add_edge(node2, node3, -2.);
+    graph.add_edge(node3, node4, 3.);
+    graph.add_edge(node2, node5, 6.);
+    graph.add_edge(node4, node5, 2.);
+
+    let shortest_distances = dynamic_programming::bellman_ford(&graph, node1);
+
+    match shortest_distances {
+        Some(distances) => {
+            for (node, &dist) in graph.node_indices().zip(distances.iter()) {
+                println!("Distance from node1 to {} = {}", graph[node], dist);
+            }
+        }
+        None => println!("Graph contains a negative cycle"),
+    }
+
     let adj_matrix = vec![
-        vec![0, 5, std::i64::MAX, 10],
-        vec![std::i64::MAX, 0, 3, std::i64::MAX],
-        vec![std::i64::MAX, std::i64::MAX, 0, 1],
-        vec![std::i64::MAX, std::i64::MAX, std::i64::MAX, 0],
+        vec![0, 5, 4, i64::MAX, i64::MAX],               // edges from node1
+        vec![i64::MAX, 0, -2, i64::MAX, 6],              // edges from node2
+        vec![i64::MAX, i64::MAX, 0, 3, i64::MAX],        // edges from node3
+        vec![i64::MAX, i64::MAX, i64::MAX, 0, 2],        // edges from node4
+        vec![i64::MAX, i64::MAX, i64::MAX, i64::MAX, 0], // edges from node5
     ];
 
     for row in &dynamic_programming::floyd_warshall(&adj_matrix) {
@@ -118,6 +145,7 @@ fn main() {
     );
 
     // Space/Time
+
     println!(
         "After Counting Sort: {:?}",
         space_for_time::counting_sort(&unsorted_arr)

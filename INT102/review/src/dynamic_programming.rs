@@ -1,3 +1,7 @@
+use std::f64::INFINITY;
+
+use petgraph::prelude::*;
+
 pub fn lcs(str1: &str, str2: &str) -> String {
     let m = str1.len();
     let n = str2.len();
@@ -177,6 +181,39 @@ fn backtrack_local_alignment(
             format!("{}{}", y, str2.chars().nth(j - 1).unwrap()),
         )
     }
+}
+
+pub fn bellman_ford<N>(graph: &Graph<N, f64>, source: NodeIndex) -> Option<Vec<f64>> {
+    let n = graph.node_count();
+    let mut dist = vec![INFINITY; n];
+
+    let source_index = source.index();
+
+    // Distance from source to itself is 0
+    dist[source_index] = 0.0;
+
+    // Relax edges repeatedly
+    for _ in 0..n - 1 {
+        for edge in graph.edge_references() {
+            let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
+
+            if dist[u] + weight < dist[v] {
+                dist[v] = dist[u] + weight;
+            }
+        }
+    }
+
+    // Check for negative weight cycles
+    for edge in graph.edge_references() {
+        let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
+
+        if dist[u] + weight < dist[v] {
+            // Graph contains negative weight cycle
+            return None;
+        }
+    }
+
+    Some(dist)
 }
 
 pub fn floyd_warshall(adj_matrix: &Vec<Vec<i64>>) -> Vec<Vec<i64>> {

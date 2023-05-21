@@ -36,7 +36,6 @@ fn create_shift_table(pattern: &str) -> HashMap<char, usize> {
     pattern
         .chars()
         .enumerate()
-        .take(m - 1)
         .map(|(i, ch)| (ch, m - i - 1)) // Step 1.1: Compute the shift for each character in the pattern
         .collect() // Step 1.2: Collect shifts into a HashMap
 }

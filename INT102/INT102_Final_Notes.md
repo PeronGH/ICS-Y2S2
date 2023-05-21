@@ -600,6 +600,28 @@ fn backtrack_lcs<T: Ord>(dp: &Vec<Vec<T>>, str1: &str, str2: &str, i: usize, j: 
 
 ### Dynamic Programming Graph
 
+#### Bellman-Ford Algorithm
+
+- **Input**: A weighted graph `G` with `n` vertices and `e` edges, represented by an edge list. A source vertex `s`.
+
+- **Output**: An array `dist[0..n-1]` where `dist[i]` represents the shortest distance from the source vertex `s` to vertex `i` in graph `G`.
+
+- **Time complexity**: `O(n*e)`, where `n` is the number of vertices and `e` is the number of edges in the graph.
+
+- **Implementation**:
+
+  1. Create an array `dist[0..n-1]`. Initialize `dist[s] = 0` (distance from source to itself is zero) and for all vertices `i != s`, set `dist[i] = infinity` (initially, all other vertices are unreachable from source).
+
+  2. Repeat the following `n-1` times (since the shortest path in any graph contains at most `n-1` edges):
+
+      a. For each edge `(u, v)` with weight `w` in the edge list of `G`, if `dist[u] + w < dist[v]`, then update `dist[v]` to `dist[u] + w`. This process is known as "relaxation".
+
+  3. Perform the step 2.a again for all edges. If any `dist[v]` can still be updated, there is a negative weight cycle, and the algorithm should report that no solution exists. Otherwise, `dist[i]` for each vertex `i` is the shortest distance from the source to `i`.
+
+Remember that the Bellman-Ford algorithm is capable of handling graphs in which some of the edge weights are negative. However, it cannot handle graphs with negative cycles.
+
+[Here](./review/src/dynamic_programming.rs) is the code:
+
 #### Floyd's Algorithm
 
 - **Input**: A weighted graph $G$ with $n$ vertices, represented by an adjacency matrix.
@@ -812,7 +834,6 @@ fn create_shift_table(pattern: &str) -> HashMap<char, usize> {
     pattern
         .chars()
         .enumerate()
-        .take(m - 1)
         .map(|(i, ch)| (ch, m - i - 1))
         .collect()
 }
