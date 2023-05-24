@@ -1,0 +1,3 @@
+use deadlock::*;
+
+fn main() {}
