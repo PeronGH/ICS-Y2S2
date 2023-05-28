@@ -636,10 +636,7 @@ fn bellman_ford<N>(graph: &Graph<N, f64>, source: NodeIndex) -> Option<Vec<f64>>
     for _ in 0..n - 1 {
         for edge in graph.edge_references() {
             let (u, v, weight) = (edge.source().index(), edge.target().index(), *edge.weight());
-
-            if dist[u] + weight < dist[v] {
-                dist[v] = dist[u] + weight;
-            }
+            dist[v] = dist[v].min(dist[u] + weight);
         }
     }
 
@@ -869,8 +866,8 @@ fn counting_sort(input_arr: &[usize]) -> Vec<usize> {
 fn create_shift_table(pattern: &str) -> HashMap<char, usize> {
     let m = pattern.len();
     pattern
-        .chars()
-        .enumerate()
+        .char_indices()
+        .take(m - 1)
         .map(|(i, ch)| (ch, m - i - 1))
         .collect()
 }

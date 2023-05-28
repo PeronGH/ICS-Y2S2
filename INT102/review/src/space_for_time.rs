@@ -34,8 +34,8 @@ pub fn counting_sort(input_arr: &[usize]) -> Vec<usize> {
 fn create_shift_table(pattern: &str) -> HashMap<char, usize> {
     let m = pattern.len();
     pattern
-        .chars()
-        .enumerate()
+        .char_indices()
+        .take(m - 1)
         .map(|(i, ch)| (ch, m - i - 1)) // Step 1.1: Compute the shift for each character in the pattern
         .collect() // Step 1.2: Collect shifts into a HashMap
 }
